@@ -1,0 +1,64 @@
+################################################################################
+#       Makefile for C project running on the REPTAR board in standalone       #
+################################################################################
+
+NM			= $(TOOL_PREFIX)-nm
+AR			= $(TOOL_PREFIX)-ar
+LD			= $(TOOL_PREFIX)-ld
+ASM			= $(TOOL_PREFIX)-as
+CC			= $(TOOL_PREFIX)-gcc
+STRIP		= $(TOOL_PREFIX)-strip
+OBJCOPY		= $(TOOL_PREFIX)-objcopy
+OBJDUMP		= $(TOOL_PREFIX)-objdump
+LIBGCC		= $(shell $(CC) --print-libgcc-file-name)
+
+TOOL_PREFIX	:= arm-none-eabi
+CFLAGS		:= -c -Wall -O0 -g -I. -I/opt/cc/$(TOOL_PREFIX)/include
+CRT0		:= crt0_arm.o
+INT			:= int_arm.o
+LDFLAGS		:= -e start  -T standalone.ld -static  -lc -L.
+OBJS		:= $(CRT0) $(INT) newlib_stubs.o main.o init.o lcd_toolbox.o gpio_toolbox.o timer_toolbox.o react_game.o
+
+all: main
+#####
+#
+# main:
+# Top level target builds for main
+#
+main: $(OBJS)
+	$(CC) $(LDFLAGS) -o labo_asp.elf $(OBJS)
+	$(NM) --numeric-sort labo_asp.elf > labo_asp.sym
+	$(OBJDUMP) --source --disassemble labo_asp.elf > labo_asp.dis
+
+#####
+#
+# Miscellaneous rules:
+#
+clean:
+	rm -f *.o labo_asp.elf labo_asp.dis labo_asp.sym symtbl
+
+#####
+#
+# Objects:
+#
+
+##### COMMENTED BY STUDENTS
+#crt0_arm.o: crt0_arm.S
+#	$(CC) $(CFLAGS) -D __ASSEMBLY__ -o crt0_arm.o crt0_arm.S
+
+#init.o: init.c
+#	$(CC) $(CFLAGS) -o init.o init.c
+#	
+#GPIO_toolbox.o: GPIO_toolbox.c
+#	$(CC) $(CFLAGS) -o GPIO_toolbox.o GPIO_toolbox.c
+#
+#main.o: main.c
+#	$(CC) $(CFLAGS) -o main.o main.c
+
+%.o: %.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+##### ADDED BY STUDENTS
+%.o: %.S
+	$(CC) $(CFLAGS) -D __ASSEMBLY__ -o $@ $<
+

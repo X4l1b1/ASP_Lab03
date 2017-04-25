@@ -1,0 +1,669 @@
+
+labo_asp.elf:     file format elf32-littlearm
+
+
+Disassembly of section .text:
+
+80000000 <__do_global_dtors_aux>:
+80000000:	e59f3010 	ldr	r3, [pc, #16]	; 80000018 <__do_global_dtors_aux+0x18>
+80000004:	e5d32000 	ldrb	r2, [r3]
+80000008:	e3520000 	cmp	r2, #0
+8000000c:	03a02001 	moveq	r2, #1
+80000010:	05c32000 	strbeq	r2, [r3]
+80000014:	e12fff1e 	bx	lr
+80000018:	800009e8 	.word	0x800009e8
+
+8000001c <frame_dummy>:
+8000001c:	e59f0024 	ldr	r0, [pc, #36]	; 80000048 <frame_dummy+0x2c>
+80000020:	e92d4008 	push	{r3, lr}
+80000024:	e5903000 	ldr	r3, [r0]
+80000028:	e3530000 	cmp	r3, #0
+8000002c:	0a000003 	beq	80000040 <frame_dummy+0x24>
+80000030:	e59f3014 	ldr	r3, [pc, #20]	; 8000004c <frame_dummy+0x30>
+80000034:	e3530000 	cmp	r3, #0
+80000038:	11a0e00f 	movne	lr, pc
+8000003c:	112fff13 	bxne	r3
+80000040:	e8bd4008 	pop	{r3, lr}
+80000044:	e12fff1e 	bx	lr
+80000048:	80000988 	.word	0x80000988
+8000004c:	00000000 	.word	0x00000000
+
+80000050 <start>:
+
+    /* Set stack pointer to end of AppStack and jump to main:
+	 */
+start:
+
+  ldr sp, =(AppStack_svr + APPSTACKSIZE - 4)
+80000050:	e59fd024 	ldr	sp, [pc, #36]	; 8000007c <start+0x2c>
+
+  mrs r1,cpsr
+80000054:	e10f1000 	mrs	r1, CPSR
+  bic r1,r1,#0x1f
+80000058:	e3c1101f 	bic	r1, r1, #31
+  orr r1,r1,#0x12
+8000005c:	e3811012 	orr	r1, r1, #18
+  msr cpsr_c,r1
+80000060:	e121f001 	msr	CPSR_c, r1
+
+  ldr sp, =(AppStack_irq + APPSTACKSIZE - 4)
+80000064:	e59fd014 	ldr	sp, [pc, #20]	; 80000080 <start+0x30>
+
+  mrs r1,cpsr
+80000068:	e10f1000 	mrs	r1, CPSR
+  bic r1,r1,#0x1f
+8000006c:	e3c1101f 	bic	r1, r1, #31
+  orr r1,r1,#0x13
+80000070:	e3811013 	orr	r1, r1, #19
+  msr cpsr_c,r1
+80000074:	e121f001 	msr	CPSR_c, r1
+
+  bl main
+80000078:	eb000119 	bl	800004e4 <main>
+8000007c:	80004a10 	.word	0x80004a10
+80000080:	80002a10 	.word	0x80002a10
+
+80000084 <__get_MSP>:
+
+char *__env[1] = { 0 };
+char **environ = __env;
+
+unsigned int __get_MSP(void)
+{
+80000084:	e92d0810 	push	{r4, fp}
+80000088:	e28db004 	add	fp, sp, #4
+8000008c:	e24dd008 	sub	sp, sp, #8
+	unsigned int sp_add;
+	asm("mov %0,sp\n":"=r"(sp_add));
+80000090:	e1a0400d 	mov	r4, sp
+80000094:	e50b4008 	str	r4, [fp, #-8]
+	return sp_add;
+80000098:	e51b3008 	ldr	r3, [fp, #-8]
+}
+8000009c:	e1a00003 	mov	r0, r3
+800000a0:	e24bd004 	sub	sp, fp, #4
+800000a4:	e8bd0810 	pop	{r4, fp}
+800000a8:	e12fff1e 	bx	lr
+
+800000ac <_exit>:
+
+int _write(int file, char *ptr, int len);
+
+void _exit(int status) {
+800000ac:	e92d4800 	push	{fp, lr}
+800000b0:	e28db004 	add	fp, sp, #4
+800000b4:	e24dd008 	sub	sp, sp, #8
+800000b8:	e50b0008 	str	r0, [fp, #-8]
+    _write(1, "exit", 4);
+800000bc:	e3a00001 	mov	r0, #1
+800000c0:	e59f1008 	ldr	r1, [pc, #8]	; 800000d0 <_exit+0x24>
+800000c4:	e3a02004 	mov	r2, #4
+800000c8:	eb0000e3 	bl	8000045c <_write>
+    while (1) {
+        ;
+    }
+800000cc:	eafffffe 	b	800000cc <_exit+0x20>
+800000d0:	800009bc 	.word	0x800009bc
+
+800000d4 <_close>:
+}
+
+int _close(int file) {
+800000d4:	e52db004 	push	{fp}		; (str fp, [sp, #-4]!)
+800000d8:	e28db000 	add	fp, sp, #0
+800000dc:	e24dd00c 	sub	sp, sp, #12
+800000e0:	e50b0008 	str	r0, [fp, #-8]
+    return -1;
+800000e4:	e3e03000 	mvn	r3, #0
+}
+800000e8:	e1a00003 	mov	r0, r3
+800000ec:	e28bd000 	add	sp, fp, #0
+800000f0:	e49db004 	pop	{fp}		; (ldr fp, [sp], #4)
+800000f4:	e12fff1e 	bx	lr
+
+800000f8 <_execve>:
+/*
+ execve
+ Transfer control to a new process. Minimal implementation (for a system without processes):
+ */
+int _execve(char *name, char **argv, char **env) {
+800000f8:	e92d4800 	push	{fp, lr}
+800000fc:	e28db004 	add	fp, sp, #4
+80000100:	e24dd010 	sub	sp, sp, #16
+80000104:	e50b0008 	str	r0, [fp, #-8]
+80000108:	e50b100c 	str	r1, [fp, #-12]
+8000010c:	e50b2010 	str	r2, [fp, #-16]
+    errno = ENOMEM;
+80000110:	eb000108 	bl	80000538 <__errno>
+80000114:	e1a03000 	mov	r3, r0
+80000118:	e3a0200c 	mov	r2, #12
+8000011c:	e5832000 	str	r2, [r3]
+    return -1;
+80000120:	e3e03000 	mvn	r3, #0
+}
+80000124:	e1a00003 	mov	r0, r3
+80000128:	e24bd004 	sub	sp, fp, #4
+8000012c:	e8bd4800 	pop	{fp, lr}
+80000130:	e12fff1e 	bx	lr
+
+80000134 <_fork>:
+/*
+ fork
+ Create a new process. Minimal implementation (for a system without processes):
+ */
+
+int _fork() {
+80000134:	e92d4800 	push	{fp, lr}
+80000138:	e28db004 	add	fp, sp, #4
+    errno = EAGAIN;
+8000013c:	eb0000fd 	bl	80000538 <__errno>
+80000140:	e1a03000 	mov	r3, r0
+80000144:	e3a0200b 	mov	r2, #11
+80000148:	e5832000 	str	r2, [r3]
+    return -1;
+8000014c:	e3e03000 	mvn	r3, #0
+}
+80000150:	e1a00003 	mov	r0, r3
+80000154:	e24bd004 	sub	sp, fp, #4
+80000158:	e8bd4800 	pop	{fp, lr}
+8000015c:	e12fff1e 	bx	lr
+
+80000160 <_fstat>:
+ fstat
+ Status of an open file. For consistency with other minimal implementations in these examples,
+ all files are regarded as character special devices.
+ The `sys/stat.h' header file required is distributed in the `include' subdirectory for this C library.
+ */
+int _fstat(int file, struct stat *st) {
+80000160:	e52db004 	push	{fp}		; (str fp, [sp, #-4]!)
+80000164:	e28db000 	add	fp, sp, #0
+80000168:	e24dd00c 	sub	sp, sp, #12
+8000016c:	e50b0008 	str	r0, [fp, #-8]
+80000170:	e50b100c 	str	r1, [fp, #-12]
+    st->st_mode = S_IFCHR;
+80000174:	e51b300c 	ldr	r3, [fp, #-12]
+80000178:	e3a02a02 	mov	r2, #8192	; 0x2000
+8000017c:	e5832004 	str	r2, [r3, #4]
+    return 0;
+80000180:	e3a03000 	mov	r3, #0
+}
+80000184:	e1a00003 	mov	r0, r3
+80000188:	e28bd000 	add	sp, fp, #0
+8000018c:	e49db004 	pop	{fp}		; (ldr fp, [sp], #4)
+80000190:	e12fff1e 	bx	lr
+
+80000194 <_getpid>:
+/*
+ getpid
+ Process-ID; this is sometimes used to generate strings unlikely to conflict with other processes. Minimal implementation, for a system without processes:
+ */
+
+int _getpid() {
+80000194:	e52db004 	push	{fp}		; (str fp, [sp, #-4]!)
+80000198:	e28db000 	add	fp, sp, #0
+    return 1;
+8000019c:	e3a03001 	mov	r3, #1
+}
+800001a0:	e1a00003 	mov	r0, r3
+800001a4:	e28bd000 	add	sp, fp, #0
+800001a8:	e49db004 	pop	{fp}		; (ldr fp, [sp], #4)
+800001ac:	e12fff1e 	bx	lr
+
+800001b0 <_isatty>:
+
+/*
+ isatty
+ Query whether output stream is a terminal. For consistency with the other minimal implementations,
+ */
+int _isatty(int file) {
+800001b0:	e92d4800 	push	{fp, lr}
+800001b4:	e28db004 	add	fp, sp, #4
+800001b8:	e24dd008 	sub	sp, sp, #8
+800001bc:	e50b0008 	str	r0, [fp, #-8]
+    switch (file){
+800001c0:	e51b3008 	ldr	r3, [fp, #-8]
+800001c4:	e2833000 	add	r3, r3, #0
+800001c8:	e3530002 	cmp	r3, #2
+800001cc:	8a000001 	bhi	800001d8 <_isatty+0x28>
+    case STDOUT_FILENO:
+    case STDERR_FILENO:
+    case STDIN_FILENO:
+        return 1;
+800001d0:	e3a03001 	mov	r3, #1
+800001d4:	ea000004 	b	800001ec <_isatty+0x3c>
+    default:
+        //errno = ENOTTY;
+        errno = EBADF;
+800001d8:	eb0000d6 	bl	80000538 <__errno>
+800001dc:	e1a03000 	mov	r3, r0
+800001e0:	e3a02009 	mov	r2, #9
+800001e4:	e5832000 	str	r2, [r3]
+        return 0;
+800001e8:	e3a03000 	mov	r3, #0
+    }
+}
+800001ec:	e1a00003 	mov	r0, r3
+800001f0:	e24bd004 	sub	sp, fp, #4
+800001f4:	e8bd4800 	pop	{fp, lr}
+800001f8:	e12fff1e 	bx	lr
+
+800001fc <_kill>:
+
+/*
+ kill
+ Send a signal. Minimal implementation:
+ */
+int _kill(int pid, int sig) {
+800001fc:	e92d4800 	push	{fp, lr}
+80000200:	e28db004 	add	fp, sp, #4
+80000204:	e24dd008 	sub	sp, sp, #8
+80000208:	e50b0008 	str	r0, [fp, #-8]
+8000020c:	e50b100c 	str	r1, [fp, #-12]
+    errno = EINVAL;
+80000210:	eb0000c8 	bl	80000538 <__errno>
+80000214:	e1a03000 	mov	r3, r0
+80000218:	e3a02016 	mov	r2, #22
+8000021c:	e5832000 	str	r2, [r3]
+    return (-1);
+80000220:	e3e03000 	mvn	r3, #0
+}
+80000224:	e1a00003 	mov	r0, r3
+80000228:	e24bd004 	sub	sp, fp, #4
+8000022c:	e8bd4800 	pop	{fp, lr}
+80000230:	e12fff1e 	bx	lr
+
+80000234 <_link>:
+/*
+ link
+ Establish a new name for an existing file. Minimal implementation:
+ */
+
+int _link(char *old, char *new) {
+80000234:	e92d4800 	push	{fp, lr}
+80000238:	e28db004 	add	fp, sp, #4
+8000023c:	e24dd008 	sub	sp, sp, #8
+80000240:	e50b0008 	str	r0, [fp, #-8]
+80000244:	e50b100c 	str	r1, [fp, #-12]
+    errno = EMLINK;
+80000248:	eb0000ba 	bl	80000538 <__errno>
+8000024c:	e1a03000 	mov	r3, r0
+80000250:	e3a0201f 	mov	r2, #31
+80000254:	e5832000 	str	r2, [r3]
+    return -1;
+80000258:	e3e03000 	mvn	r3, #0
+}
+8000025c:	e1a00003 	mov	r0, r3
+80000260:	e24bd004 	sub	sp, fp, #4
+80000264:	e8bd4800 	pop	{fp, lr}
+80000268:	e12fff1e 	bx	lr
+
+8000026c <_lseek>:
+
+/*
+ lseek
+ Set position in a file. Minimal implementation:
+ */
+int _lseek(int file, int ptr, int dir) {
+8000026c:	e52db004 	push	{fp}		; (str fp, [sp, #-4]!)
+80000270:	e28db000 	add	fp, sp, #0
+80000274:	e24dd014 	sub	sp, sp, #20
+80000278:	e50b0008 	str	r0, [fp, #-8]
+8000027c:	e50b100c 	str	r1, [fp, #-12]
+80000280:	e50b2010 	str	r2, [fp, #-16]
+    return 0;
+80000284:	e3a03000 	mov	r3, #0
+}
+80000288:	e1a00003 	mov	r0, r3
+8000028c:	e28bd000 	add	sp, fp, #0
+80000290:	e49db004 	pop	{fp}		; (ldr fp, [sp], #4)
+80000294:	e12fff1e 	bx	lr
+
+80000298 <_sbrk>:
+/*
+ sbrk
+ Increase program data space.
+ Malloc and related functions depend on this
+ */
+caddr_t _sbrk(int incr) {
+80000298:	e92d4800 	push	{fp, lr}
+8000029c:	e28db004 	add	fp, sp, #4
+800002a0:	e24dd010 	sub	sp, sp, #16
+800002a4:	e50b0010 	str	r0, [fp, #-16]
+
+    extern char _ebss; // Defined by the linker
+    static char *heap_end;
+    char *prev_heap_end;
+
+    if (heap_end == 0) {
+800002a8:	e59f309c 	ldr	r3, [pc, #156]	; 8000034c <_sbrk+0xb4>
+800002ac:	e5933000 	ldr	r3, [r3]
+800002b0:	e3530000 	cmp	r3, #0
+800002b4:	1a000002 	bne	800002c4 <_sbrk+0x2c>
+        heap_end = &_ebss;
+800002b8:	e59f308c 	ldr	r3, [pc, #140]	; 8000034c <_sbrk+0xb4>
+800002bc:	e59f208c 	ldr	r2, [pc, #140]	; 80000350 <_sbrk+0xb8>
+800002c0:	e5832000 	str	r2, [r3]
+    }
+    prev_heap_end = heap_end;
+800002c4:	e59f3080 	ldr	r3, [pc, #128]	; 8000034c <_sbrk+0xb4>
+800002c8:	e5933000 	ldr	r3, [r3]
+800002cc:	e50b3008 	str	r3, [fp, #-8]
+
+char * stack = (char*) __get_MSP();
+800002d0:	ebffff6b 	bl	80000084 <__get_MSP>
+800002d4:	e1a03000 	mov	r3, r0
+800002d8:	e50b300c 	str	r3, [fp, #-12]
+     if (heap_end + incr >  stack)
+800002dc:	e59f3068 	ldr	r3, [pc, #104]	; 8000034c <_sbrk+0xb4>
+800002e0:	e5932000 	ldr	r2, [r3]
+800002e4:	e51b3010 	ldr	r3, [fp, #-16]
+800002e8:	e0822003 	add	r2, r2, r3
+800002ec:	e51b300c 	ldr	r3, [fp, #-12]
+800002f0:	e1520003 	cmp	r2, r3
+800002f4:	9a000009 	bls	80000320 <_sbrk+0x88>
+     {
+         _write (STDERR_FILENO, "Heap and stack collision\n", 25);
+800002f8:	e3a00002 	mov	r0, #2
+800002fc:	e59f1050 	ldr	r1, [pc, #80]	; 80000354 <_sbrk+0xbc>
+80000300:	e3a02019 	mov	r2, #25
+80000304:	eb000054 	bl	8000045c <_write>
+         errno = ENOMEM;
+80000308:	eb00008a 	bl	80000538 <__errno>
+8000030c:	e1a03000 	mov	r3, r0
+80000310:	e3a0200c 	mov	r2, #12
+80000314:	e5832000 	str	r2, [r3]
+         return  (caddr_t) -1;
+80000318:	e3e03000 	mvn	r3, #0
+8000031c:	ea000006 	b	8000033c <_sbrk+0xa4>
+         //abort ();
+     }
+
+    heap_end += incr;
+80000320:	e59f3024 	ldr	r3, [pc, #36]	; 8000034c <_sbrk+0xb4>
+80000324:	e5932000 	ldr	r2, [r3]
+80000328:	e51b3010 	ldr	r3, [fp, #-16]
+8000032c:	e0822003 	add	r2, r2, r3
+80000330:	e59f3014 	ldr	r3, [pc, #20]	; 8000034c <_sbrk+0xb4>
+80000334:	e5832000 	str	r2, [r3]
+    return (caddr_t) prev_heap_end;
+80000338:	e51b3008 	ldr	r3, [fp, #-8]
+
+}
+8000033c:	e1a00003 	mov	r0, r3
+80000340:	e24bd004 	sub	sp, fp, #4
+80000344:	e8bd4800 	pop	{fp, lr}
+80000348:	e12fff1e 	bx	lr
+8000034c:	800009f0 	.word	0x800009f0
+80000350:	80004a14 	.word	0x80004a14
+80000354:	800009c4 	.word	0x800009c4
+
+80000358 <_read>:
+ Read a character to a file. `libc' subroutines will use this system routine for input from all files, including stdin
+ Returns -1 on error or blocks until the number of characters have been read.
+ */
+
+
+int _read(int file, char *ptr, int len) {
+80000358:	e92d4800 	push	{fp, lr}
+8000035c:	e28db004 	add	fp, sp, #4
+80000360:	e24dd018 	sub	sp, sp, #24
+80000364:	e50b0010 	str	r0, [fp, #-16]
+80000368:	e50b1014 	str	r1, [fp, #-20]	; 0xffffffec
+8000036c:	e50b2018 	str	r2, [fp, #-24]	; 0xffffffe8
+//    int n;
+    int num = 0;
+80000370:	e3a03000 	mov	r3, #0
+80000374:	e50b3008 	str	r3, [fp, #-8]
+//            *ptr++ = c;
+//            num++;
+//        }
+//        break;
+    default:
+        errno = EBADF;
+80000378:	eb00006e 	bl	80000538 <__errno>
+8000037c:	e1a03000 	mov	r3, r0
+80000380:	e3a02009 	mov	r2, #9
+80000384:	e5832000 	str	r2, [r3]
+        return -1;
+80000388:	e3e03000 	mvn	r3, #0
+    }
+    return num;
+}
+8000038c:	e1a00003 	mov	r0, r3
+80000390:	e24bd004 	sub	sp, fp, #4
+80000394:	e8bd4800 	pop	{fp, lr}
+80000398:	e12fff1e 	bx	lr
+
+8000039c <_stat>:
+ stat
+ Status of a file (by name). Minimal implementation:
+ int    _EXFUN(stat,( const char *__path, struct stat *__sbuf ));
+ */
+
+int _stat(const char *filepath, struct stat *st) {
+8000039c:	e52db004 	push	{fp}		; (str fp, [sp, #-4]!)
+800003a0:	e28db000 	add	fp, sp, #0
+800003a4:	e24dd00c 	sub	sp, sp, #12
+800003a8:	e50b0008 	str	r0, [fp, #-8]
+800003ac:	e50b100c 	str	r1, [fp, #-12]
+    st->st_mode = S_IFCHR;
+800003b0:	e51b300c 	ldr	r3, [fp, #-12]
+800003b4:	e3a02a02 	mov	r2, #8192	; 0x2000
+800003b8:	e5832004 	str	r2, [r3, #4]
+    return 0;
+800003bc:	e3a03000 	mov	r3, #0
+}
+800003c0:	e1a00003 	mov	r0, r3
+800003c4:	e28bd000 	add	sp, fp, #0
+800003c8:	e49db004 	pop	{fp}		; (ldr fp, [sp], #4)
+800003cc:	e12fff1e 	bx	lr
+
+800003d0 <_times>:
+/*
+ times
+ Timing information for current process. Minimal implementation:
+ */
+
+clock_t _times(struct tms *buf) {
+800003d0:	e52db004 	push	{fp}		; (str fp, [sp, #-4]!)
+800003d4:	e28db000 	add	fp, sp, #0
+800003d8:	e24dd00c 	sub	sp, sp, #12
+800003dc:	e50b0008 	str	r0, [fp, #-8]
+    return -1;
+800003e0:	e3e03000 	mvn	r3, #0
+}
+800003e4:	e1a00003 	mov	r0, r3
+800003e8:	e28bd000 	add	sp, fp, #0
+800003ec:	e49db004 	pop	{fp}		; (ldr fp, [sp], #4)
+800003f0:	e12fff1e 	bx	lr
+
+800003f4 <_unlink>:
+
+/*
+ unlink
+ Remove a file's directory entry. Minimal implementation:
+ */
+int _unlink(char *name) {
+800003f4:	e92d4800 	push	{fp, lr}
+800003f8:	e28db004 	add	fp, sp, #4
+800003fc:	e24dd008 	sub	sp, sp, #8
+80000400:	e50b0008 	str	r0, [fp, #-8]
+    errno = ENOENT;
+80000404:	eb00004b 	bl	80000538 <__errno>
+80000408:	e1a03000 	mov	r3, r0
+8000040c:	e3a02002 	mov	r2, #2
+80000410:	e5832000 	str	r2, [r3]
+    return -1;
+80000414:	e3e03000 	mvn	r3, #0
+}
+80000418:	e1a00003 	mov	r0, r3
+8000041c:	e24bd004 	sub	sp, fp, #4
+80000420:	e8bd4800 	pop	{fp, lr}
+80000424:	e12fff1e 	bx	lr
+
+80000428 <_wait>:
+
+/*
+ wait
+ Wait for a child process. Minimal implementation:
+ */
+int _wait(int *status) {
+80000428:	e92d4800 	push	{fp, lr}
+8000042c:	e28db004 	add	fp, sp, #4
+80000430:	e24dd008 	sub	sp, sp, #8
+80000434:	e50b0008 	str	r0, [fp, #-8]
+    errno = ECHILD;
+80000438:	eb00003e 	bl	80000538 <__errno>
+8000043c:	e1a03000 	mov	r3, r0
+80000440:	e3a0200a 	mov	r2, #10
+80000444:	e5832000 	str	r2, [r3]
+    return -1;
+80000448:	e3e03000 	mvn	r3, #0
+}
+8000044c:	e1a00003 	mov	r0, r3
+80000450:	e24bd004 	sub	sp, fp, #4
+80000454:	e8bd4800 	pop	{fp, lr}
+80000458:	e12fff1e 	bx	lr
+
+8000045c <_write>:
+/*
+ write
+ Write a character to a file. `libc' subroutines will use this system routine for output to all files, including stdout
+ Returns -1 on error or number of bytes sent
+ */
+int _write(int file, char *ptr, int len) {
+8000045c:	e92d4800 	push	{fp, lr}
+80000460:	e28db004 	add	fp, sp, #4
+80000464:	e24dd018 	sub	sp, sp, #24
+80000468:	e50b0010 	str	r0, [fp, #-16]
+8000046c:	e50b1014 	str	r1, [fp, #-20]	; 0xffffffec
+80000470:	e50b2018 	str	r2, [fp, #-24]	; 0xffffffe8
+    int n;
+    switch (file) {
+80000474:	e51b3010 	ldr	r3, [fp, #-16]
+80000478:	e3530001 	cmp	r3, #1
+8000047c:	0a000012 	beq	800004cc <_write+0x70>
+80000480:	e3530002 	cmp	r3, #2
+80000484:	1a00000a 	bne	800004b4 <_write+0x58>
+    case STDOUT_FILENO: /*stdout*/
+    	// TODO: insert the function to write a message to the LCD
+        break;
+    case STDERR_FILENO: /* stderr */
+        for (n = 0; n < len; n++) {
+80000488:	e3a03000 	mov	r3, #0
+8000048c:	e50b3008 	str	r3, [fp, #-8]
+80000490:	ea000002 	b	800004a0 <_write+0x44>
+80000494:	e51b3008 	ldr	r3, [fp, #-8]
+80000498:	e2833001 	add	r3, r3, #1
+8000049c:	e50b3008 	str	r3, [fp, #-8]
+800004a0:	e51b2008 	ldr	r2, [fp, #-8]
+800004a4:	e51b3018 	ldr	r3, [fp, #-24]	; 0xffffffe8
+800004a8:	e1520003 	cmp	r2, r3
+800004ac:	bafffff8 	blt	80000494 <_write+0x38>
+#elif  STDERR_USART == 3
+            while ((USART3->SR & USART_FLAG_TC) == (uint16_t)RESET) {}
+            USART3->DR = (*ptr++ & (uint16_t)0x01FF);
+#endif
+        }
+        break;
+800004b0:	ea000006 	b	800004d0 <_write+0x74>
+    default:
+        errno = EBADF;
+800004b4:	eb00001f 	bl	80000538 <__errno>
+800004b8:	e1a03000 	mov	r3, r0
+800004bc:	e3a02009 	mov	r2, #9
+800004c0:	e5832000 	str	r2, [r3]
+        return -1;
+800004c4:	e3e03000 	mvn	r3, #0
+800004c8:	ea000001 	b	800004d4 <_write+0x78>
+int _write(int file, char *ptr, int len) {
+    int n;
+    switch (file) {
+    case STDOUT_FILENO: /*stdout*/
+    	// TODO: insert the function to write a message to the LCD
+        break;
+800004cc:	e1a00000 	nop			; (mov r0, r0)
+        break;
+    default:
+        errno = EBADF;
+        return -1;
+    }
+    return len;
+800004d0:	e51b3018 	ldr	r3, [fp, #-24]	; 0xffffffe8
+}
+800004d4:	e1a00003 	mov	r0, r3
+800004d8:	e24bd004 	sub	sp, fp, #4
+800004dc:	e8bd4800 	pop	{fp, lr}
+800004e0:	e12fff1e 	bx	lr
+
+800004e4 <main>:
+int t[8];
+
+
+/* main */
+int main(void)
+{
+800004e4:	e52db004 	push	{fp}		; (str fp, [sp, #-4]!)
+800004e8:	e28db000 	add	fp, sp, #0
+800004ec:	e24dd00c 	sub	sp, sp, #12
+
+	int i;
+
+	for (i=0;i<8;i++)
+800004f0:	e3a03000 	mov	r3, #0
+800004f4:	e50b3008 	str	r3, [fp, #-8]
+800004f8:	ea000009 	b	80000524 <main+0x40>
+	{
+		t[i] = i*(i-4);
+800004fc:	e51b3008 	ldr	r3, [fp, #-8]
+80000500:	e2433004 	sub	r3, r3, #4
+80000504:	e51b2008 	ldr	r2, [fp, #-8]
+80000508:	e0010392 	mul	r1, r2, r3
+8000050c:	e59f3020 	ldr	r3, [pc, #32]	; 80000534 <main+0x50>
+80000510:	e51b2008 	ldr	r2, [fp, #-8]
+80000514:	e7831102 	str	r1, [r3, r2, lsl #2]
+int main(void)
+{
+
+	int i;
+
+	for (i=0;i<8;i++)
+80000518:	e51b3008 	ldr	r3, [fp, #-8]
+8000051c:	e2833001 	add	r3, r3, #1
+80000520:	e50b3008 	str	r3, [fp, #-8]
+80000524:	e51b3008 	ldr	r3, [fp, #-8]
+80000528:	e3530007 	cmp	r3, #7
+8000052c:	dafffff2 	ble	800004fc <main+0x18>
+	{
+		t[i] = i*(i-4);
+	}
+
+	while (1);
+80000530:	eafffffe 	b	80000530 <main+0x4c>
+80000534:	800009f4 	.word	0x800009f4
+
+80000538 <__errno>:
+80000538:	e59f3004 	ldr	r3, [pc, #4]	; 80000544 <__errno+0xc>
+8000053c:	e5930000 	ldr	r0, [r3]
+80000540:	e12fff1e 	bx	lr
+80000544:	80000550 	.word	0x80000550
+
+Disassembly of section .init:
+
+8000098c <_init>:
+8000098c:	e1a0c00d 	mov	ip, sp
+80000990:	e92ddff8 	push	{r3, r4, r5, r6, r7, r8, r9, sl, fp, ip, lr, pc}
+80000994:	e24cb004 	sub	fp, ip, #4
+80000998:	e24bd028 	sub	sp, fp, #40	; 0x28
+8000099c:	e89d6ff0 	ldm	sp, {r4, r5, r6, r7, r8, r9, sl, fp, sp, lr}
+800009a0:	e12fff1e 	bx	lr
+
+Disassembly of section .fini:
+
+800009a4 <_fini>:
+800009a4:	e1a0c00d 	mov	ip, sp
+800009a8:	e92ddff8 	push	{r3, r4, r5, r6, r7, r8, r9, sl, fp, ip, lr, pc}
+800009ac:	e24cb004 	sub	fp, ip, #4
+800009b0:	e24bd028 	sub	sp, fp, #40	; 0x28
+800009b4:	e89d6ff0 	ldm	sp, {r4, r5, r6, r7, r8, r9, sl, fp, sp, lr}
+800009b8:	e12fff1e 	bx	lr
