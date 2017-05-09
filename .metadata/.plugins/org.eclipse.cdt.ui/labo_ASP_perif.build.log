@@ -1,0 +1,60 @@
+10:25:11 **** Build of configuration Debug for project labo_ASP_perif ****
+make all 
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -D __ASSEMBLY__ -o crt0_arm.o crt0_arm.S
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o newlib_stubs.o newlib_stubs.c
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o main.o main.c
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o init.o init.c
+init.c: In function 'isr_handler':
+init.c:262:3: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o lcd_toolbox.o lcd_toolbox.c
+lcd_toolbox.h:32:15: note: expected 'uchar *' but argument is of type 'char *'
+init.c:264:3: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o gpio_toolbox.o gpio_toolbox.c
+lcd_toolbox.h:32:15: note: expected 'uchar *' but argument is of type 'char *'
+init.c:269:3: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness
+/opt/arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/include/stdio.h:262:5: note: expected 'char *' but argument is of type 'uchar *'
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -D __ASSEMBLY__ -o int_arm.o int_arm.S
+init.c:270:3: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o timer_toolbox.o timer_toolbox.c
+lcd_toolbox.h:32:15: note: expected 'uchar *' but argument is of type 'char *'
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o applications.o applications.c
+init.c:273:4: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+arm-none-eabi-gcc -e start  -T standalone.ld -static  -lc -L. -o labo_asp.elf crt0_arm.o newlib_stubs.o main.o init.o lcd_toolbox.o gpio_toolbox.o int_arm.o timer_toolbox.o applications.o
+lcd_toolbox.h:32:15: note: expected 'uchar *' but argument is of type 'char *'
+arm-none-eabi-nm --numeric-sort labo_asp.elf > labo_asp.sym
+init.c:275:4: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+arm-none-eabi-objdump --source --disassemble labo_asp.elf > labo_asp.dis
+lcd_toolbox.h:32:15: note: expected 'uchar *' but argument is of type 'char *'
+init.c:277:4: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+lcd_toolbox.h:32:15: note: expected 'uchar *' but argument is of type 'char *'
+init.c:279:4: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+lcd_toolbox.h:32:15: note: expected 'uchar *' but argument is of type 'char *'
+init.c:281:4: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+lcd_toolbox.h:32:15: note: expected 'uchar *' but argument is of type 'char *'
+init.c:283:4: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+lcd_toolbox.h:32:15: note: expected 'uchar *' but argument is of type 'char *'
+init.c:285:4: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+lcd_toolbox.h:32:15: note: expected 'uchar *' but argument is of type 'char *'
+init.c:287:3: warning: suggest parentheses around comparison in operand of '|'
+init.c:290:4: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+lcd_toolbox.h:32:15: note: expected 'uchar *' but argument is of type 'char *'
+init.c:293:3: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness
+/opt/arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/include/stdio.h:262:5: note: expected 'char *' but argument is of type 'uchar *'
+init.c:294:3: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+lcd_toolbox.h:32:15: note: expected 'uchar *' but argument is of type 'char *'
+gpio_toolbox.c: In function 'ReadLed':
+gpio_toolbox.c:62:1: warning: control reaches end of non-void function
+applications.c: In function 'jeuDeReaction':
+applications.c:25:4: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+lcd_toolbox.h:32:15: note: expected 'uchar *' but argument is of type 'char *'
+applications.c:26:4: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+lcd_toolbox.h:32:15: note: expected 'uchar *' but argument is of type 'char *'
+applications.c:27:4: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+lcd_toolbox.h:32:15: note: expected 'uchar *' but argument is of type 'char *'
+applications.c:47:3: warning: pointer targets in passing argument 1 of 'sprintf' differ in signedness
+/opt/arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2/../../../../arm-none-eabi/include/stdio.h:262:5: note: expected 'char *' but argument is of type 'uchar *'
+applications.c:48:3: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+lcd_toolbox.h:32:15: note: expected 'uchar *' but argument is of type 'char *'
+
+10:25:11 Build Finished (took 367ms)
+

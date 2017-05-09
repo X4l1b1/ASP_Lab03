@@ -1,0 +1,172 @@
+/* ----------------------------------------------------------------------
+  Institut ReDS - HEIG-VD Yverdon-les-Bains
+ ------------------------------------------------------------------------
+
+ Auteur : Evangelina LOLIVIER-EXLER
+ Email  : evangelina.lolivier-exler@heig-vd.ch
+ Date   : 17/09/2008
+ Modified: 24/05/2012 REPTAR board adaptation
+ Description : LCD toolbox
+ -----------------------------------------------------------------------
+*/
+
+#include "stddefs.h"
+#include "lcd.h"
+#include "vga_lookup.h"
+#include "fb_fonts.h"
+#include "gpio.h"
+#include "prcm.h"
+#include "bits.h"
+
+#define LINES_PER_SCREEN	(PIXELS_PER_COL/FONT_HEIGHT)
+#define MAX_CHAR_PER_STRING	30
+
+
+
+// globals to keep track of foreground, background colors and x,y position
+uchar lcd_color_depth=16;	// 16 bits per pixel
+uchar lcd_bg_color=5;		// 0 to 15, used as lookup into VGA color table
+uchar lcd_fg_color=8;		// 0 to 15, used as lookup into VGA color table
+
+
+
+//------------------------------------------------------------------------------
+// Delay for some usecs. - Not accurate
+// and no Cache
+void udelay(int delay)
+{
+  volatile int i;
+  for ( i = LOOPS_PER_USEC * delay; i ; i--)
+	;
+}
+
+
+
+///--------------------------------------------------------------------------
+// lcd_on
+//
+// This function turns on the DM3730 Display Controller
+//
+void lcd_on()
+{
+
+  // Enable the clocks to the DISPC
+  // enable functional clock (will be enable with the LCD_on function)
+  DSS_CM_REG(CM_FCLKEN)|=BIT0;
+  // enable interfaces clocks (L3 and L4)  (will be enable with the LCD_on function)
+  DSS_CM_REG(CM_ICLKEN)|=BIT0;
+
+  // power up the LCD
+  udelay(10000);
+  // LCD output enable
+  LCD_REG(control)|= BIT0;
+  udelay(10000);
+
+}
+
+//--------------------------------------------------------------------------
+// lcd_off
+//
+// This function turns off the DM3730 Display Controller
+//
+void lcd_off()
+{
+        // power down the LCD
+        udelay(10000);
+    
+	// digital output disable
+	LCD_REG(control)&=~BIT1;
+	// LCD output disable
+	LCD_REG(control)&=~BIT0;
+	udelay(10000);
+}
+
+
+
+
+// ------------------------------------------------------------------
+// get_pixel_add return the address of a pixel with respect to the frame buffer start address
+ulong get_pixel_add (ulong X, ulong Y)
+  {
+	  return (Y * PIXELS_PER_ROW + X) * 2;  // décalage de 2 car 1 pixel = 2 octets dans le fram buffer
+  }
+
+// ------------------------------------------------------------------
+// fb_set_pixel sets a pixel to the specified color (between 0 et 15).
+void fb_set_pixel(ulong X, ulong Y, uchar color)
+{
+	LCD_BUF(get_pixel_add(X, Y)) = vga_lookup[color];
+}
+
+
+
+// ------------------------------------------------------------------
+// fb_print_char prints a character at the specified location.
+//
+void fb_print_char(uchar cchar, ulong x, ulong y, uchar color)
+{
+	int i, j;
+	cchar -= FIRST_CHAR;
+
+	for(i = 0; i < FONT_HEIGHT; ++i)
+	{
+		for(j = 0; j < FONT_WIDTH; ++j)
+		{
+			if(fb_font_data[cchar][i] & (0x80 >> j))
+				fb_set_pixel(x + j, y + i, color);
+		}
+	}
+}
+
+// ------------------------------------------------------------------
+// fb_print_string prints a string at the specified location.(30 characters max)
+//
+void fb_print_string(uchar *pcbuffer, ulong x, ulong y, uchar color)
+{
+   int i, size;
+
+   //for(size = 0; *(pcbuffer+size); ++size);
+
+   //if(x + size * FONT_WIDTH > PIXELS_PER_ROW)
+
+   for(i = 0; *(pcbuffer+i) != '\0'; ++i){
+	   // Gestion \n = \r\n
+	   if(*(pcbuffer+i) == '\n'){
+		   x = 0;
+		   y += FONT_HEIGHT;
+		   continue;
+	   }
+	   else if(*(pcbuffer+i) == '\r'){
+		   x = 0;
+		   continue;
+	   }
+
+	   fb_print_char(*(pcbuffer+i), x, y, color);
+
+	   x += FONT_WIDTH;
+	   if(x + FONT_WIDTH > PIXELS_PER_ROW){
+		   x = 0;
+		   y += FONT_HEIGHT;
+	   }
+   }
+}
+
+// ------------------------------------------------------------------
+//
+// This function clear the screen
+//
+void clear_screen()
+{
+	int i;
+	
+	for(i = 0; i < NB_PIXELS ; ++i)
+	{
+		LCD_BUF(i * 2) = vga_lookup[lcd_bg_color]; // décalage de 2 en 2 car chaque pixel est drivé par 2 octets dans le frame buffer
+	}
+}
+
+
+
+
+
+

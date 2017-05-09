@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;labo_ASP_perif/timer_toolbok.h&apos; to &apos;timer_toolbox.h&apos;" description="Rename resource &apos;timer_toolbok.h&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="timer_toolbok.h" name="timer_toolbox.h" stamp="1491903154047" updateReferences="true"/>
+</session>

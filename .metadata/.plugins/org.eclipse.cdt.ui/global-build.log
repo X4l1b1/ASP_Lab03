@@ -1,0 +1,23 @@
+11:19:25 **** Incremental Build of configuration Debug for project labo_ASP_sdcard ****
+make all 
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -D __ASSEMBLY__ -o crt0_arm.o crt0_arm.S
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o init.o init.c
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o menu_toolbox.o menu_toolbox.c
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o newlib_stubs.o newlib_stubs.c
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o main.o main.c
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -D __ASSEMBLY__ -o int_arm.o int_arm.S
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o sd_toolbox.o sd_toolbox.c
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o test_menu.o test_menu.c
+In file included from test_menu.c:19:0:
+ff.h:18:0: warning: "NULL" redefined
+/opt/arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2/include/stddef.h:400:0: note: this is the location of the previous definition
+test_menu.c: In function 'initMenusTree':
+test_menu.c:49:12: warning: unused variable 'path'
+test_menu.c:48:10: warning: unused variable 'dirs'
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o twl4030.o twl4030.c
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o fat_toolbox.o fat_toolbox.c
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o ff.o ff.c
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o fat_mmcsd.o fat_mmcsd.c
+arm-none-eabi-gcc -e start  -T standalone.ld -static  -lc -L. -o labo_asp.elf crt0_arm.o obj_gpio/gpio_toolbox.o init.o menu_toolbox.o newlib_stubs.o main.o obj_lcd/lcd_toolbox.o int_arm.o sd_toolbox.o test_menu.o twl4030.o fat_toolbox.o ff.o obj_i2c/i2c_toolbox.o fat_mmcsd.o
+arm-none-eabi-nm --numeric-sort labo_asp.elf > labo_asp.sym
+arm-none-eabi-objdump --source --disassemble labo_asp.elf > labo_asp.dis

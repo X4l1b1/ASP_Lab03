@@ -1,0 +1,52 @@
+/*---------------------------------------------------------------------------------------
+* But               : Petit programme pour etre charge dans le micro et affiche avec dump
+* Auteur            : Evangelina LOLIVIER-EXLER
+* Date              : 29.07.2008
+* Version           : 1.0
+* Fichier           : demo.c
+*----------------------------------------------------------------------------------------*/
+#include "cfg.h"
+#include "stddefs.h"
+#include "lcd_toolbox.h"
+#include "lcd.h"
+#include "init.h"
+
+
+/* Global variables */
+
+vulong AppStack_svr[APPSTACKSIZE/4];
+vulong AppStack_irq[APPSTACKSIZE/4];
+int t[8];
+
+void general_init();
+
+/* main */
+int main(void)
+{
+	char s[] = "Ludovic";
+	general_init();
+	clear_screen();
+
+	fb_set_pixel(50, 50, 3);
+	fb_set_pixel(51, 50, 3);
+	fb_set_pixel(50, 51, 3);
+	fb_set_pixel(51, 51, 3);
+
+
+	fb_print_char('G', 100, 100, 15);
+	//fb_print_string(s, 0, 0, 15);
+	volatile int i = 0;
+
+	while(1){
+		i = (i++)%2;
+	}
+
+	return(0);
+}
+
+void general_init()
+{
+	lcd_off();
+	lcd_init();
+	lcd_on();
+}
