@@ -2,6 +2,11 @@
 
 This README would normally document whatever steps are necessary to get your application up and running.
 
+
+### Info donnée en séance de labo ###
+MMCHS_IE --> Activer BWR ou BRR, avant d'envoyer la commande pour écrire ou lire
+
+
 ### What is this repository for? ###
 
 * Quick summary
