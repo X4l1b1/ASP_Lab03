@@ -33,7 +33,7 @@ int main(void)
 	general_init();
 	clear_screen();
 
-	//jeuDeReaction();
+	jeuDeReaction();
 
 	fb_set_pixel(50, 50, 3);
 	fb_set_pixel(51, 50, 3);
@@ -41,7 +41,7 @@ int main(void)
 	fb_set_pixel(51, 51, 3);
 
 
-	fb_print_char('E', 100, 100, 15);
+	fb_print_char('K', 100, 100, 15);
 	fb_print_char('F', 100, 300, 15);
 
 	fb_print_string((uchar*)s, 700, 200, 15);
@@ -71,7 +71,6 @@ void general_init()
 	lcd_off();
 	lcd_init();
 	lcd_on();
-	mmc1_init();
 
 	// pour etape 2 - GPIO
 	GPIO_init();

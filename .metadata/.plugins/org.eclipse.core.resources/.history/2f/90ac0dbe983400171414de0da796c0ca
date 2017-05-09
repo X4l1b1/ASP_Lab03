@@ -11,7 +11,7 @@ uchar gameStatus = 0;	//0 = init, 1 = running, 2 = you can press
 vulong lastScore = 0;
 vulong bestScore = 0;
 vulong timerr = 0;
-
+/*
 void jeuDeReaction()
 {
 	gameStatus = 0;	//0 = init, 1 = running, 2 = you can press
@@ -48,4 +48,4 @@ void jeuDeReaction()
 		fb_print_string(s, 300, 450, 15);
 	}
 }
-
+*/

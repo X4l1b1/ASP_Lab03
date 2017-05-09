@@ -500,6 +500,7 @@
 </instance>
 <instance id="cdt.managedbuild.config.gnu.cross.exe.debug.76865702;cdt.managedbuild.config.gnu.cross.exe.debug.76865702.;cdt.managedbuild.tool.gnu.cross.c.compiler.1548662355;cdt.managedbuild.tool.gnu.c.compiler.input.2061633048">
 <collector id="org.eclipse.cdt.make.core.PerProjectSICollector">
+<includePath path="/home/redsuser/Ludo/ASP_Lab03/labo_ASP_sdcard"/>
 <includePath path="/home/redsuser/Ludo/workspace/labo_ASP_sdcard"/>
 <includePath path="/opt/cc/arm-none-eabi/include" removed="true"/>
 <includePath path="/usr/lib/gcc/x86_64-linux-gnu/4.8/include"/>

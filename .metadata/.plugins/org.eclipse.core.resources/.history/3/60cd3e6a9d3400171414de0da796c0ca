@@ -20,6 +20,7 @@
 vulong cid_reg[4], rca, csd_reg[4], scr_reg[2];
 vulong buffer_data[1024];	// 8 512-byte blocks
 
+
 int wait(int delay)
 {
   int i;
@@ -76,7 +77,7 @@ void mmchs_send_command(ulong cmdindx,ulong cmdarg, uchar acmd, uchar nblocks)
         	MMCHS1_REG(MMCHS_BLK) |= ((ulong)nblocks << MMCHS_BLK_NBLK_SHIFT);
         	// command flags: multiple blocks and block count enable
         	cmd |= (MMCHS_CMD_MSBS|MMCHS_CMD_BCE);
-    	}
+    	}cid_reg
 
         // set data direction
         if (cmdindx == 17 || cmdindx == 18 || cmdindx == 51 || (cmdindx == 6 && acmd == 0))
@@ -179,8 +180,6 @@ void mmc1_pad_conf()
 
 
 
-
-
 	/* System Control Module: PAD Configuration */
 
 
@@ -217,7 +216,7 @@ void change_frequency(ulong clkd)
 	ulong sysctl;
 
 	// clock disable output
-	MMCHS1_REG(MMCHS_SYSCTL) &= ~MMCHS_SYSCTL_CEN;
+	MMCHS1_REG(MMCHS_SYcid_regSCTL) &= ~MMCHS_SYSCTL_CEN;
 
 	// clkd configuration
 	sysctl = MMCHS1_REG(MMCHS_SYSCTL);
@@ -313,7 +312,7 @@ int sdhc_init()
 
 	// send CMD0: go to idle state
 	mmchs_send_command((ulong) 0,(ulong) 0, 0, 0);
-
+	cid_reg
 	// send CMD8: send interface condition, voltage host supplied 2.7-3.6V
 	arg=(ulong)(SD_VOLT_2P7_3P6|SD_CHECK_PATTERN);
 	mmchs_send_command((ulong) 8, arg, 0, 0);
@@ -453,6 +452,26 @@ int sdhc_init()
 
 
 	wait(10000);
+
+	void read_productname(uchar * name)
+	{
+
+		//Modifier le code ici
+		name[0]= 0x00;
+		name[1]= 0x00;
+		name[2]= 0x00;
+		name[3]= 0x00;
+		name[4]= 0x00;
+		name[5]= '\0';
+
+	}
+
+
+
+
+
+
+
 
 	return 0;
 

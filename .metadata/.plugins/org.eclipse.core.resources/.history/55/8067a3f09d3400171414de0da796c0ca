@@ -370,6 +370,7 @@ int sdhc_init()
 	cid_reg[2] = MMCHS1_REG(MMCHS_RSP54);
 	cid_reg[3] = MMCHS1_REG(MMCHS_RSP76);
 
+
 	
 	// get CSD register
 	// response (type R2) is the CSD register, copy it in the global variable csd_reg

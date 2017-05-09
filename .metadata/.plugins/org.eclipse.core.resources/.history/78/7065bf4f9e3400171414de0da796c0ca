@@ -11,7 +11,6 @@
 
 #include "stddefs.h"
 #include "bits.h"
-#include "gpio.h"
 
 #define GPIO_MOD5	5
 #define LED0		BIT15

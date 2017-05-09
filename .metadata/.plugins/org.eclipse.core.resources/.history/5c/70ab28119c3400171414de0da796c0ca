@@ -20,6 +20,8 @@
 vulong cid_reg[4], rca, csd_reg[4], scr_reg[2];
 vulong buffer_data[1024];	// 8 512-byte blocks
 
+
+
 int wait(int delay)
 {
   int i;
@@ -176,8 +178,6 @@ void mmc1_pad_conf()
 		SET_REG32(CONTROL_PBIAS_LITE) &= ~PBIASLITEPWRDNZ1;
 		SET_REG32(CONTROL_WKUP_CTRL) &= ~GPIO_IO_PWRDNZ;
 	}
-
-
 
 
 
@@ -364,20 +364,9 @@ int sdhc_init()
 	//completer le code ici
 	// get CID register
 	// response (type R2) is the CID register, copy it in the global variable cid_reg
-	mmchs_send_command((ulong)10, arg, 0, 0);
-	cid_reg[0] = MMCHS1_REG(MMCHS_RSP10);
-	cid_reg[1] = MMCHS1_REG(MMCHS_RSP32);
-	cid_reg[2] = MMCHS1_REG(MMCHS_RSP54);
-	cid_reg[3] = MMCHS1_REG(MMCHS_RSP76);
-
 	
 	// get CSD register
 	// response (type R2) is the CSD register, copy it in the global variable csd_reg
-	mmchs_send_command((ulong)9, arg, 0, 0);
-	csd_reg[0] = MMCHS1_REG(MMCHS_RSP10);
-	csd_reg[1] = MMCHS1_REG(MMCHS_RSP32);
-	csd_reg[2] = MMCHS1_REG(MMCHS_RSP54);
-	csd_reg[3] = MMCHS1_REG(MMCHS_RSP76);
     
 	/////////////////////////////////////////////////
 

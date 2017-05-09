@@ -17,7 +17,7 @@ CFLAGS		:= -c -Wall -O0 -g -I. -I/opt/cc/$(TOOL_PREFIX)/include
 CRT0		:= crt0_arm.o
 LDFLAGS		:= -e start  -T standalone.ld -static  -lc -L.
 OBJS		:= $(CRT0) obj_gpio/gpio_toolbox.o init.o menu_toolbox.o newlib_stubs.o
-OBJS		+= main.o obj_lcd/lcd_toolbox.o int_arm.o sd_toolbox.o test_menu.o twl4030.o fat_toolbox.o ff.o obj_i2c/i2c_toolbox.o fat_mmcsd.o #applications.o gpio_toolbox.o timer_toolbox.o
+OBJS		+= main.o obj_lcd/lcd_toolbox.o int_arm.o sd_toolbox.o test_menu.o twl4030.o fat_toolbox.o ff.o obj_i2c/i2c_toolbox.o fat_mmcsd.o applications.o
 
 all: main
 #####

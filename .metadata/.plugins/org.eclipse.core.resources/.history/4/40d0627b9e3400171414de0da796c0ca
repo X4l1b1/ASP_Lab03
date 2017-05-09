@@ -15,7 +15,7 @@
 #include "gpio_toolbox.h"
 #include "bits.h"
 #include "sd_toolbox.h"
-//#include "applications.h"
+#include "applications.h"
 
 
 /* Global variables */
@@ -33,7 +33,7 @@ int main(void)
 	general_init();
 	clear_screen();
 
-	//jeuDeReaction();
+	jeuDeReaction();
 
 	fb_set_pixel(50, 50, 3);
 	fb_set_pixel(51, 50, 3);

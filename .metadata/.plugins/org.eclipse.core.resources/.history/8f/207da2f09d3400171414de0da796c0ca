@@ -15,7 +15,7 @@
 #include "gpio_toolbox.h"
 #include "bits.h"
 #include "sd_toolbox.h"
-//#include "applications.h"
+#include "applications.h"
 
 
 /* Global variables */
