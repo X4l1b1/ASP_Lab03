@@ -529,6 +529,25 @@ int mmchs_read_block(const vulong *data, ulong block)
  **/
 int mmchs_write_multiple_block(const uchar *data, ulong block, uchar nblocks)
 {
+
+	/*CMD24 adtc [31:0] data
+address2 R1 WRITE_BLOCK In case of SDSC Card, block length is
+set by the SET_BLOCKLEN
+command1
+.
+
+In case of SDHC and SDXC Cards,
+block length is fixed 512 Bytes
+regardless of the SET_BLOCKLEN
+command. 
+CMD25 adtc [31:0] data
+address2
+R1 WRITE_MULTIPLE_B
+LOCK
+Continuously writes blocks of data until
+a STOP_TRANSMISSION follows.
+Block length is specified the same as
+WRITE_BLOCK command. */
 	
 
 	return 0;
@@ -546,7 +565,26 @@ int mmchs_write_multiple_block(const uchar *data, ulong block, uchar nblocks)
  **/
 int mmchs_read_multiple_block(uchar *data, ulong block, uchar nblocks)
 {
-	
+	/* USE COMMAND 18 Continuously transfers data blocks
+from card to host until interrupted by a
+STOP_TRANSMISSION command.
+Block length is specified the same as
+READ_SINGLE_BLOCK command. 
+		OU COMMAND 6 nbocks fois READ_SINGLE_
+BLOCK
+In the case of a Standard Capacity SD
+Memory Card, this command, this
+command reads a block of the size
+selected by the SET_BLOCKLEN
+command. 1
+In case of SDHC and SDXC Cards,
+block length is fixed 512 Bytes
+regardless of the SET_BLOCKLEN
+command.*/
+	// FAire attention : bien checker les diagrammes pour savoir quoi lire quand dans PSTAT
+	// Faire ensuite attention a quelles commandes envoyer
+	// SInon easy peasy lemon squizzy
+
 
 	return 0;
 }
@@ -566,6 +604,9 @@ ulong read_card_size()
 
 	//Completer le code ici
 	size = 0;
+	//device size C_SIZE 12bit [73:62] number in 412Kbytes
+	//  MMCHS1_REG(MMCHS_RSP54) accède aux bits 95 à 64. 
+	// Donc on veut les 12 premiers bits (juste faire un masque et raus)
 
 	return size;
 }
@@ -585,6 +626,10 @@ void read_productname(uchar * name)
 	name[3]= 0x00;
 	name[4]= 0x00;
 	name[5]= '\0';
+	// Product name PNM 40 [103:64] 
+	//  MMCHS1_REG(MMCHS_RSP54) accède aux bits 95 à 64. 
+	// - MMCHS1_REG(MMCHS_RSP76) accède aux bits 127 à 96. 
+	// Donc on veut tout RSP54 et les 8 premiers bits de RSP76
 
 }
 
