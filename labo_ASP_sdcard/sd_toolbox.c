@@ -497,6 +497,41 @@ int mmchs_write_block(const vulong *data, ulong block)
 {
 	
 
+	ulong arg;
+	int k;
+	vulong *data_ptr;
+
+	// initialize data pointer to the destination address
+	data_ptr = (vulong *) data;
+
+	// clear STATUS register
+	MMCHS1_REG(MMCHS_STAT)=0xFFFFFFFF;
+
+	// enable to set flag concerning data events in the STAT register
+	// disable buffer write flag
+	MMCHS1_REG(MMCHS_IE) &= ~MMCHS_IE_BRR_ENABLE;
+	// enable buffer read flag
+	MMCHS1_REG(MMCHS_IE) |= MMCHS_IE_BWR_ENABLE;	
+
+	/* wait for the data lines mmc1_dati availability */
+	while ((MMCHS1_REG(MMCHS_PSTATE) & MMCHS_PSTATE_DATI) == MMCHS_PSTATE_DATI_CMDDIS);
+	// Send CMD24 command: write single block
+	arg=block;
+	mmchs_send_command((ulong) 24, arg, 0, 1);
+
+	// wait for buffer write ready
+		while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_BRR) == MMCHS_STAT_BWR_NOTREADY);
+	// clear flag
+		MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_BRR;
+
+
+	// wait for the end of the transfer
+	while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_TC) == 0)
+		wait(1000);
+	// clear status TC bit
+	MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_TC;
+
+
 	return 0;
 }
 
@@ -509,7 +544,7 @@ int mmchs_write_block(const vulong *data, ulong block)
  * \returns  0 - successful written of data.
  *           1 - failure to write the data.
  **/
-int mmchs_read_block(const vulong *data, ulong block)
+int mmchs_read_block(const vulong *data, ulong block) // TODO :return -1 ???
 {
 	ulong arg;
 	int k;
@@ -600,7 +635,7 @@ WRITE_BLOCK command. */
  * \returns  0 - successful written of data.
  *           1 - failure to write the data.
  **/
-int mmchs_read_multiple_block(uchar *data, ulong block, uchar nblocks)
+int mmchs_read_multiple_block(uchar *data, ulong block, uchar nblocks) // TODO : return -1 ???
 {
 	/* USE COMMAND 18 Continuously transfers data blocks
 from card to host until interrupted by a
@@ -622,9 +657,13 @@ command.*/
 	// Faire ensuite attention a quelles commandes envoyer
 	// SInon easy peasy lemon squizzy
 
-ulong arg;
+	ulong arg;
 	int k;
 	vulong *data_ptr;
+
+	if(nblocks == 1)
+		return mmchs_read_block(data_ptr, block);
+	
 
 	// initialize data pointer to the destination address
 	data_ptr = (vulong *) data;
@@ -640,9 +679,14 @@ ulong arg;
 
 	/* wait for the data lines mmc1_dati availability */
 	while ((MMCHS1_REG(MMCHS_PSTATE) & MMCHS_PSTATE_DATI) == MMCHS_PSTATE_DATI_CMDDIS);
-	// Send CMD17 command: read single block
+	// Send CMD18 command: read multiple block
 	arg=block;
-	mmchs_send_command((ulong) 18, arg, 0, 1);
+
+		// Sets right block number
+		mmchs_send_command((ulong) 23, nblocks, 0, 0);
+	
+		mmchs_send_command((ulong) 18, arg, 0, 1);
+	
 
 	// wait for buffer read ready
 		while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_BRR) == MMCHS_STAT_BRR_NOTREADY);
@@ -658,6 +702,7 @@ ulong arg;
 	}
 	// CMD12 : STOP_TRANSMISSION, arg is stuff bits
 	mmchs_send_command((ulong) 12, (ulong) 0, 0, 0);
+
 
 	// wait for the end of the transfer
 	while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_TC) == 0) // Useless ?
