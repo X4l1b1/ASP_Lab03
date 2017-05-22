@@ -586,8 +586,43 @@ Continuously writes blocks of data until
 a STOP_TRANSMISSION follows.
 Block length is specified the same as
 WRITE_BLOCK command. */
+	return 0;
+	
+}
 
-	ulong arg;
+/**
+ * \brief   This function sends the read command to MMCSD card.
+ *
+ * \param    data          It determines the address to where data has to be written, must be an array of SD_BLOCK_LENGTH bytes
+ * \param    block         It determines from which block data has to be read
+ * \param	 nblocks	   It determines the number of blocks to be read, max 8
+ *
+ * \returns  0 - successful written of data.
+ *           1 - failure to write the data.
+ **/
+int mmchs_read_multiple_block(uchar *data, ulong block, uchar nblocks)
+{
+	/* USE COMMAND 18 Continuously transfers data blocks
+from card to host until interrupted by a
+STOP_TRANSMISSION command.
+Block length is specified the same as
+READ_SINGLE_BLOCK command. 
+		OU COMMAND 6 nbocks fois READ_SINGLE_
+BLOCK
+In the case of a Standard Capacity SD
+Memory Card, this command, this
+command reads a block of the size
+selected by the SET_BLOCKLEN
+command. 1
+In case of SDHC and SDXC Cards,
+block length is fixed 512 Bytes
+regardless of the SET_BLOCKLEN
+command.*/
+	// FAire attention : bien checker les diagrammes pour savoir quoi lire quand dans PSTAT
+	// Faire ensuite attention a quelles commandes envoyer
+	// SInon easy peasy lemon squizzy
+
+ulong arg;
 	int k;
 	vulong *data_ptr;
 
@@ -629,42 +664,6 @@ WRITE_BLOCK command. */
 		wait(1000);
 	// clear status TC bit
 	MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_TC;	
-
-	return 0;
-}
-
-/**
- * \brief   This function sends the read command to MMCSD card.
- *
- * \param    data          It determines the address to where data has to be written, must be an array of SD_BLOCK_LENGTH bytes
- * \param    block         It determines from which block data has to be read
- * \param	 nblocks	   It determines the number of blocks to be read, max 8
- *
- * \returns  0 - successful written of data.
- *           1 - failure to write the data.
- **/
-int mmchs_read_multiple_block(uchar *data, ulong block, uchar nblocks)
-{
-	/* USE COMMAND 18 Continuously transfers data blocks
-from card to host until interrupted by a
-STOP_TRANSMISSION command.
-Block length is specified the same as
-READ_SINGLE_BLOCK command. 
-		OU COMMAND 6 nbocks fois READ_SINGLE_
-BLOCK
-In the case of a Standard Capacity SD
-Memory Card, this command, this
-command reads a block of the size
-selected by the SET_BLOCKLEN
-command. 1
-In case of SDHC and SDXC Cards,
-block length is fixed 512 Bytes
-regardless of the SET_BLOCKLEN
-command.*/
-	// FAire attention : bien checker les diagrammes pour savoir quoi lire quand dans PSTAT
-	// Faire ensuite attention a quelles commandes envoyer
-	// SInon easy peasy lemon squizzy
-
 
 	return 0;
 }
