@@ -511,7 +511,46 @@ int mmchs_write_block(const vulong *data, ulong block)
  **/
 int mmchs_read_block(const vulong *data, ulong block)
 {
-	
+	ulong arg;
+	int k;
+	vulong *data_ptr;
+
+	// initialize data pointer to the destination address
+	data_ptr = (vulong *) data;
+
+	// clear STATUS register
+	MMCHS1_REG(MMCHS_STAT)=0xFFFFFFFF;
+
+	// enable to set flag concerning data events in the STAT register
+	// disable buffer write flag
+	MMCHS1_REG(MMCHS_IE) &= ~MMCHS_IE_BWR_ENABLE;
+	// enable buffer read flag
+	MMCHS1_REG(MMCHS_IE) |= MMCHS_IE_BRR_ENABLE;
+
+	/* wait for the data lines mmc1_dati availability */
+	while ((MMCHS1_REG(MMCHS_PSTATE) & MMCHS_PSTATE_DATI) == MMCHS_PSTATE_DATI_CMDDIS);
+	// Send CMD17 command: read single block
+	arg=block;
+	mmchs_send_command((ulong) 17, arg, 0, 1);
+
+	// wait for buffer read ready
+		while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_BRR) == MMCHS_STAT_BRR_NOTREADY);
+	// clear flag
+		MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_BRR;
+
+
+	for (k=0;k<SD_BLOCK_LENGTH/4;k++)
+	{
+	// read next 4 bytes to the buffer
+		*data_ptr = MMCHS1_REG(MMCHS_DATA);
+		data_ptr++;
+	}
+
+	// wait for the end of the transfer
+	while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_TC) == 0)
+		wait(1000);
+	// clear status TC bit
+	MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_TC;
 
 
 	return 0;
