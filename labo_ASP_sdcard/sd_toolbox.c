@@ -525,7 +525,7 @@ int mmchs_read_block(const vulong *data, ulong block)
 	// disable buffer write flag
 	MMCHS1_REG(MMCHS_IE) &= ~MMCHS_IE_BWR_ENABLE;
 	// enable buffer read flag
-	MMCHS1_REG(MMCHS_IE) |= MMCHS_IE_BRR_ENABLE;
+	MMCHS1_REG(MMCHS_IE) |= MMCHS_IE_BRR_ENABLE;	
 
 	/* wait for the data lines mmc1_dati availability */
 	while ((MMCHS1_REG(MMCHS_PSTATE) & MMCHS_PSTATE_DATI) == MMCHS_PSTATE_DATI_CMDDIS);
@@ -566,14 +566,13 @@ int mmchs_read_block(const vulong *data, ulong block)
  * \returns  0 - successful written of data.
  *           1 - failure to write the data.
  **/
-int mmchs_write_multiple_block(const uchar *data, ulong block, uchar nblocks)
+int mmchs_write_multiple_block(const uchar *data, ulong block, uchar nblocks) // TO TEST
 {
 
 	/*CMD24 adtc [31:0] data
 address2 R1 WRITE_BLOCK In case of SDSC Card, block length is
 set by the SET_BLOCKLEN
 command1
-.
 
 In case of SDHC and SDXC Cards,
 block length is fixed 512 Bytes
@@ -587,7 +586,49 @@ Continuously writes blocks of data until
 a STOP_TRANSMISSION follows.
 Block length is specified the same as
 WRITE_BLOCK command. */
-	
+
+	ulong arg;
+	int k;
+	vulong *data_ptr;
+
+	// initialize data pointer to the destination address
+	data_ptr = (vulong *) data;
+
+	// clear STATUS register
+	MMCHS1_REG(MMCHS_STAT)=0xFFFFFFFF;
+
+	// enable to set flag concerning data events in the STAT register
+	// disable buffer write flag
+	MMCHS1_REG(MMCHS_IE) &= ~MMCHS_IE_BWR_ENABLE;
+	// enable buffer read flag
+	MMCHS1_REG(MMCHS_IE) |= MMCHS_IE_BRR_ENABLE;	
+
+	/* wait for the data lines mmc1_dati availability */
+	while ((MMCHS1_REG(MMCHS_PSTATE) & MMCHS_PSTATE_DATI) == MMCHS_PSTATE_DATI_CMDDIS);
+	// Send CMD17 command: read single block
+	arg=block;
+	mmchs_send_command((ulong) 18, arg, 0, 1);
+
+	// wait for buffer read ready
+		while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_BRR) == MMCHS_STAT_BRR_NOTREADY);
+	// clear flag
+		MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_BRR;
+
+
+	for (k=0;k<SD_BLOCK_LENGTH*nblocks/4;k++)
+	{
+	// read next 4 bytes to the buffer
+		*data_ptr = MMCHS1_REG(MMCHS_DATA);
+		data_ptr++;
+	}
+	// CMD12 : STOP_TRANSMISSION, arg is stuff bits
+	mmchs_send_command((ulong) 12, (ulong) 0, 0, 0);
+
+	// wait for the end of the transfer
+	while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_TC) == 0) // Useless ?
+		wait(1000);
+	// clear status TC bit
+	MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_TC;	
 
 	return 0;
 }
