@@ -602,13 +602,20 @@ ulong read_card_size()
 	//return card size in number of K bytes
 	ulong size;
 
-	//Completer le code ici
-	size = 0;
-	//device size C_SIZE 12bit [73:62] number in 412Kbytes
-	//  MMCHS1_REG(MMCHS_RSP54) accède aux bits 95 à 64. 
-	// Donc on veut les 12 premiers bits (juste faire un masque et raus)
+	//Completer le code 
+	//CMD9 : SEND_CSD. arg[1] is card address
+	mmchs_send_command((ulong) 9, rca, 0, 0);
+	// C_SIZE : 22 bits [69..48]
 
-	return size;
+	// Only 16 MSB are wanted
+	ulong size_low = (MMCHS1_REG(MMCHS_RSP32) << 16) >> 16;
+
+	// Only 6 LSB are wanted
+	ulong size_high = (MMCHS1_REG(MMCHS_RSP54) << 26) >> 10;
+
+	size = size_low | size_high;
+
+	return (size + 1)*512;
 }
 
 
@@ -620,14 +627,25 @@ void read_productname(uchar * name)
 {
 
 	//Modifier le code ici
-	name[0]= 0x00;
-	name[1]= 0x00;
-	name[2]= 0x00;
-	name[3]= 0x00;
-	name[4]= 0x00;
-	name[5]= '\0';
+	//CMD10 : SEND_CID, arg[1] is card address
+	mmchs_send_command((ulong) 10, rca, 0, 0);
+	
 	// Product name PNM 40 [103:64] 
-	//  MMCHS1_REG(MMCHS_RSP54) accède aux bits 95 à 64. 
+	// bits 95 to 64 
+	int name_low 	= MMCHS1_REG(MMCHS_RSP54);
+	// bits 127 to 96
+	int name_high	= MMCHS1_REG(MMCHS_RSP76);
+
+	uchar * p = (uchar*)&name_low;
+	name[0]= p[0];
+	name[1]= p[1];
+	name[2]= p[2];
+	name[3]= p[3];
+
+	p = (uchar*)&name_high;
+	name[4]= p[0];
+	name[5]= '\0';
+	//  MMCHS1_REG(MMCHS_RSP54) accède aux 
 	// - MMCHS1_REG(MMCHS_RSP76) accède aux bits 127 à 96. 
 	// Donc on veut tout RSP54 et les 8 premiers bits de RSP76
 
