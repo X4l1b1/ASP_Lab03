@@ -683,13 +683,15 @@ WRITE_BLOCK command. */
 int mmchs_read_multiple_block(uchar *data, ulong block, uchar nblocks) // TODO : return -1 ???
 {
 
-	ulong arg;
-	int k;
-	vulong *data_ptr;
+	if(nblocks == 1){
 
-	if(nblocks == 1)
-		return mmchs_read_block(data_ptr, block);
-	
+		const vulong* data_ptr_sgl = (vulong*) data;
+		return mmchs_read_block(data_ptr_sgl, block);
+	}
+
+	ulong arg;
+	int k, l;
+	vulong *data_ptr;
 
 	// initialize data pointer to the destination address
 	data_ptr = (vulong *) data;
@@ -706,35 +708,35 @@ int mmchs_read_multiple_block(uchar *data, ulong block, uchar nblocks) // TODO :
 	/* wait for the data lines mmc1_dati availability */
 	while ((MMCHS1_REG(MMCHS_PSTATE) & MMCHS_PSTATE_DATI) == MMCHS_PSTATE_DATI_CMDDIS);
 	// Send CMD18 command: read multiple block
+
 	arg=block;
-
-		// Sets right block number
-		mmchs_send_command((ulong) 23, nblocks, 0, 0);
 	
-		mmchs_send_command((ulong) 18, arg, 0, 1);
+		mmchs_send_command((ulong) 18, arg, 0, nblocks);
 	
-
+	for(l = 0; l < nblocks; l++){
 	// wait for buffer read ready
 		while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_BRR) == MMCHS_STAT_BRR_NOTREADY);
 	// clear flag
 		MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_BRR;
 
 
-	for (k=0;k<SD_BLOCK_LENGTH*nblocks/4;k++)
-	{
-	// read next 4 bytes to the buffer
-		*data_ptr = MMCHS1_REG(MMCHS_DATA);
-		data_ptr++;
+		for (k=0;k<SD_BLOCK_LENGTH/4;k++)
+		{
+		// read next 4 bytes to the buffer
+			*data_ptr = MMCHS1_REG(MMCHS_DATA);
+			data_ptr++;
+		}
 	}
-	// CMD12 : STOP_TRANSMISSION, arg is stuff bits
-	mmchs_send_command((ulong) 12, (ulong) 0, 0, 0);
-
 
 	// wait for the end of the transfer
 	while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_TC) == 0) // Useless ?
 		wait(1000);
+
 	// clear status TC bit
 	MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_TC;	
+
+	// CMD12 : STOP_TRANSMISSION, arg is stuff bits
+	mmchs_send_command((ulong) 12, (ulong) 0, 0, 0);
 
 	return 0;
 }

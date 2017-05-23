@@ -33,7 +33,7 @@ int main(void)
 	general_init();
 	clear_screen();
 
-	memset(buffer, 0, 1024*sizeof(vulong));
+	memset(buffer, 0, 4096*sizeof(vulong));
 
 	const char s[] = "Les fleurs d'oranger au parfum d'orient.\n\t\tCette douleur que j'ai en mangeant de l'origan.\rtest";
 
@@ -41,7 +41,7 @@ int main(void)
 
 	display_sd_info();
 
-	mmchs_read_multiple_block(buffer, (ulong)0, 4);
+	mmchs_read_multiple_block(buffer, (ulong)0, 1);
 	fb_print_string((uchar*)buffer, 50, 300, 15);
 
 	while(1){
