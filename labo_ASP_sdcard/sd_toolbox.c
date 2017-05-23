@@ -782,14 +782,13 @@ void read_productname(uchar * name)
 	// bits 127 to 96
 	int name_high	= cid_reg[3];
 
-	uchar * p = (uchar*)&name_low;
-	name[0]= p[3];
-	name[1]= p[2];
+	uchar * p = (uchar*)&name_high;
+	name[0]= p[0];
+	p = (uchar*)&name_low;
+	name[1]= p[0];
 	name[2]= p[1];
-	name[3]= p[0];
-
-	p = (uchar*)&name_high;
-	name[4]= p[0];
+	name[3]= p[2];
+	name[4]= p[3];
 	name[5]= '\0';
 	//  MMCHS1_REG(MMCHS_RSP54) accède aux 
 	// - MMCHS1_REG(MMCHS_RSP76) accède aux bits 127 à 96. 
