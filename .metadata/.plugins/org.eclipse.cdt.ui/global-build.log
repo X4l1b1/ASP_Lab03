@@ -1,8 +1,13 @@
-09:14:22 **** Incremental Build of configuration Debug for project labo_ASP_sdcard ****
+09:16:51 **** Incremental Build of configuration Debug for project labo_ASP_sdcard ****
 make all 
 arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o main.o main.c
 main.c: In function 'main':
-main.c:37:2: warning: implicit declaration of function 'display_sd_info'
+main.c:39:2: warning: implicit declaration of function 'display_sd_info'
+arm-none-eabi-gcc -e start  -T standalone.ld -static  -lc -L. -o labo_asp.elf crt0_arm.o obj_gpio/gpio_toolbox.o init.o menu_toolbox.o newlib_stubs.o main.o obj_lcd/lcd_toolbox.o int_arm.o sd_toolbox.o test_menu.o twl4030.o fat_toolbox.o ff.o obj_i2c/i2c_toolbox.o fat_mmcsd.o 
+arm-none-eabi-nm --numeric-sort labo_asp.elf > labo_asp.sym
+arm-none-eabi-objdump --source --disassemble labo_asp.elf > labo_asp.dis
+09:16:53 **** Incremental Build of configuration Debug for project labo_ASP_sdcard ****
+make all 
 arm-none-eabi-gcc -e start  -T standalone.ld -static  -lc -L. -o labo_asp.elf crt0_arm.o obj_gpio/gpio_toolbox.o init.o menu_toolbox.o newlib_stubs.o main.o obj_lcd/lcd_toolbox.o int_arm.o sd_toolbox.o test_menu.o twl4030.o fat_toolbox.o ff.o obj_i2c/i2c_toolbox.o fat_mmcsd.o 
 arm-none-eabi-nm --numeric-sort labo_asp.elf > labo_asp.sym
 arm-none-eabi-objdump --source --disassemble labo_asp.elf > labo_asp.dis
