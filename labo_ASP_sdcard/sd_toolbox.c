@@ -621,6 +621,51 @@ Continuously writes blocks of data until
 a STOP_TRANSMISSION follows.
 Block length is specified the same as
 WRITE_BLOCK command. */
+	
+	ulong arg;
+	int k;
+	vulong *data_ptr;
+
+	// initialize data pointer to the destination address
+	data_ptr = (vulong *) data;
+
+	// clear STATUS register
+	MMCHS1_REG(MMCHS_STAT)=0xFFFFFFFF;
+
+	// enable to set flag concerning data events in the STAT register
+	// disable buffer write flag
+	MMCHS1_REG(MMCHS_IE) &= ~MMCHS_IE_BRR_ENABLE;
+	// enable buffer read flag
+	MMCHS1_REG(MMCHS_IE) |= MMCHS_IE_BWR_ENABLE;	
+
+	/* wait for the data lines mmc1_dati availability */
+	while ((MMCHS1_REG(MMCHS_PSTATE) & MMCHS_PSTATE_DATI) == MMCHS_PSTATE_DATI_CMDDIS);
+	// Send CMD24 command: write single block
+	arg=block;
+
+	// Sets right block number
+	mmchs_send_command((ulong) 23, nblocks, 0, 0);
+	
+	mmchs_send_command((ulong) 25, arg, 0, 1);
+
+	// wait for buffer write ready
+		while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_BRR) == MMCHS_STAT_BWR_NOTREADY);
+	// clear flag
+		MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_BRR;
+
+	// WHERE TO WRITE?!
+
+	// wait for the end of the transfer
+	while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_TC) == 0)
+		wait(1000);
+
+	// CMD12 : STOP_TRANSMISSION, arg is stuff bits
+	mmchs_send_command((ulong) 12, (ulong) 0, 0, 0);
+
+	// clear status TC bit
+	MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_TC;
+
+
 	return 0;
 	
 }
@@ -637,25 +682,6 @@ WRITE_BLOCK command. */
  **/
 int mmchs_read_multiple_block(uchar *data, ulong block, uchar nblocks) // TODO : return -1 ???
 {
-	/* USE COMMAND 18 Continuously transfers data blocks
-from card to host until interrupted by a
-STOP_TRANSMISSION command.
-Block length is specified the same as
-READ_SINGLE_BLOCK command. 
-		OU COMMAND 6 nbocks fois READ_SINGLE_
-BLOCK
-In the case of a Standard Capacity SD
-Memory Card, this command, this
-command reads a block of the size
-selected by the SET_BLOCKLEN
-command. 1
-In case of SDHC and SDXC Cards,
-block length is fixed 512 Bytes
-regardless of the SET_BLOCKLEN
-command.*/
-	// FAire attention : bien checker les diagrammes pour savoir quoi lire quand dans PSTAT
-	// Faire ensuite attention a quelles commandes envoyer
-	// SInon easy peasy lemon squizzy
 
 	ulong arg;
 	int k;
