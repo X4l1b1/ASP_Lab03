@@ -52,6 +52,7 @@ int mmchs_is_card_write_protected()
  **/
 void mmchs_send_command(ulong cmdindx,ulong cmdarg, uchar acmd, uchar nblocks)
 {
+	// SD CARD SPECIFICATION - COMMANDS LIST PAGE 73
 	ulong cmd;
 
 	// set command index
@@ -621,51 +622,6 @@ Continuously writes blocks of data until
 a STOP_TRANSMISSION follows.
 Block length is specified the same as
 WRITE_BLOCK command. */
-	
-	ulong arg;
-	int k;
-	vulong *data_ptr;
-
-	// initialize data pointer to the destination address
-	data_ptr = (vulong *) data;
-
-	// clear STATUS register
-	MMCHS1_REG(MMCHS_STAT)=0xFFFFFFFF;
-
-	// enable to set flag concerning data events in the STAT register
-	// disable buffer write flag
-	MMCHS1_REG(MMCHS_IE) &= ~MMCHS_IE_BRR_ENABLE;
-	// enable buffer read flag
-	MMCHS1_REG(MMCHS_IE) |= MMCHS_IE_BWR_ENABLE;	
-
-	/* wait for the data lines mmc1_dati availability */
-	while ((MMCHS1_REG(MMCHS_PSTATE) & MMCHS_PSTATE_DATI) == MMCHS_PSTATE_DATI_CMDDIS);
-	// Send CMD24 command: write single block
-	arg=block;
-
-	// Sets right block number
-	mmchs_send_command((ulong) 23, nblocks, 0, 0);
-	
-	mmchs_send_command((ulong) 25, arg, 0, 1);
-
-	// wait for buffer write ready
-		while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_BRR) == MMCHS_STAT_BWR_NOTREADY);
-	// clear flag
-		MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_BRR;
-
-	// WHERE TO WRITE?!
-
-	// wait for the end of the transfer
-	while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_TC) == 0)
-		wait(1000);
-
-	// CMD12 : STOP_TRANSMISSION, arg is stuff bits
-	mmchs_send_command((ulong) 12, (ulong) 0, 0, 0);
-
-	// clear status TC bit
-	MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_TC;
-
-
 	return 0;
 	
 }
@@ -682,6 +638,25 @@ WRITE_BLOCK command. */
  **/
 int mmchs_read_multiple_block(uchar *data, ulong block, uchar nblocks) // TODO : return -1 ???
 {
+	/* USE COMMAND 18 Continuously transfers data blocks
+from card to host until interrupted by a
+STOP_TRANSMISSION command.
+Block length is specified the same as
+READ_SINGLE_BLOCK command. 
+		OU COMMAND 6 nbocks fois READ_SINGLE_
+BLOCK
+In the case of a Standard Capacity SD
+Memory Card, this command, this
+command reads a block of the size
+selected by the SET_BLOCKLEN
+command. 1
+In case of SDHC and SDXC Cards,
+block length is fixed 512 Bytes
+regardless of the SET_BLOCKLEN
+command.*/
+	// FAire attention : bien checker les diagrammes pour savoir quoi lire quand dans PSTAT
+	// Faire ensuite attention a quelles commandes envoyer
+	// SInon easy peasy lemon squizzy
 
 	ulong arg;
 	int k;
@@ -758,10 +733,10 @@ ulong read_card_size()
 	// C_SIZE : 22 bits [69..48]
 
 	// Only 16 MSB are wanted
-	ulong size_low = csd_reg[1] >> 16;
+	ulong size_low = MMCHS1_REG(MMCHS_RSP32) >> 16;
 
 	// Only 6 LSB are wanted
-	ulong size_high = (csd_reg[2] << 26) >> 10;
+	ulong size_high = (MMCHS1_REG(MMCHS_RSP54) << 26) >> 10;
 
 	size = size_low | size_high;
 
@@ -776,17 +751,21 @@ ulong read_card_size()
 void read_productname(uchar * name)
 {
 
+	//Modifier le code ici
+	//CMD10 : SEND_CID, arg[1] is card address
+	mmchs_send_command((ulong) 10, rca, 0, 0);
+	
 	// Product name PNM 40 [103:64] 
 	// bits 95 to 64 
-	int name_low 	= cid_reg[2];
+	int name_low 	= MMCHS1_REG(MMCHS_RSP54);
 	// bits 127 to 96
-	int name_high	= cid_reg[3];
+	int name_high	= MMCHS1_REG(MMCHS_RSP76);
 
 	uchar * p = (uchar*)&name_low;
-	name[0]= p[3];
-	name[1]= p[2];
-	name[2]= p[1];
-	name[3]= p[0];
+	name[0]= p[0];
+	name[1]= p[1];
+	name[2]= p[2];
+	name[3]= p[3];
 
 	p = (uchar*)&name_high;
 	name[4]= p[0];

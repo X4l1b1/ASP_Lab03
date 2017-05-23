@@ -783,10 +783,10 @@ void read_productname(uchar * name)
 	int name_high	= cid_reg[3];
 
 	uchar * p = (uchar*)&name_low;
-	name[0]= p[3];
-	name[1]= p[2];
-	name[2]= p[1];
-	name[3]= p[0];
+	name[0]= p[0];
+	name[1]= p[1];
+	name[2]= p[2];
+	name[3]= p[3];
 
 	p = (uchar*)&name_high;
 	name[4]= p[0];

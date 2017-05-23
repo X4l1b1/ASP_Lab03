@@ -34,7 +34,7 @@ int main(void)
 
 	fb_print_string((uchar*)s, 200, 100, 15);
 
-	display_sd_info();
+
 
 	while(1){
 		/*if(SWIsPressed(1)){

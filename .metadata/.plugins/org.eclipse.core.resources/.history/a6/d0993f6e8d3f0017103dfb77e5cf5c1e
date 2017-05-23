@@ -30,22 +30,21 @@ void general_init();
 int main(void)
 {
 	const char s[] = "Les fleurs d'oranger au parfum d'orient.\n\t\tCette douleur que j'ai en mangeant de l'origan.\rtest";
+	general_init();
+	clear_screen();
 
+	char productName[100];
 
-	fb_print_string((uchar*)s, 200, 100, 15);
+	fb_print_string(s, 200, 100, 15);
+
+	mmchs_send_command((ulong)7, rca, 0, 0));
+
+	read_productname(productName);
 
 	display_sd_info();
 
-	while(1){
-		/*if(SWIsPressed(1)){
-			SetLed(1);
-			start_timer();	// étape 4
-		}
-		else
-			ResetLed(1);*/
+	while(1) {
 
-		//sprintf(s, "%d", timerValueWhenInterrupt);
-		//fb_print_string(s, 200, 300, 15);
 	}
 
 	return(0);

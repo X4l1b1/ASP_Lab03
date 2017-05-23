@@ -778,15 +778,15 @@ void read_productname(uchar * name)
 
 	// Product name PNM 40 [103:64] 
 	// bits 95 to 64 
-	int name_low 	= cid_reg[2];
+	int name_low 	= cid_reg[2]
 	// bits 127 to 96
 	int name_high	= cid_reg[3];
 
 	uchar * p = (uchar*)&name_low;
-	name[0]= p[3];
-	name[1]= p[2];
-	name[2]= p[1];
-	name[3]= p[0];
+	name[0]= p[0];
+	name[1]= p[1];
+	name[2]= p[2];
+	name[3]= p[3];
 
 	p = (uchar*)&name_high;
 	name[4]= p[0];
