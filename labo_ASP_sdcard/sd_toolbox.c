@@ -732,7 +732,7 @@ ulong read_card_size()
 	// C_SIZE : 22 bits [69..48]
 
 	// Only 16 MSB are wanted
-	ulong size_low = (MMCHS1_REG(MMCHS_RSP32) << 16) >> 16;
+	ulong size_low = MMCHS1_REG(MMCHS_RSP32) >> 16;
 
 	// Only 6 LSB are wanted
 	ulong size_high = (MMCHS1_REG(MMCHS_RSP54) << 26) >> 10;
