@@ -758,10 +758,10 @@ ulong read_card_size()
 	// C_SIZE : 22 bits [69..48]
 
 	// Only 16 MSB are wanted
-	ulong size_low = MMCHS1_REG(MMCHS_RSP32) >> 16;
+	ulong size_low = csd_reg[1] >> 16;
 
 	// Only 6 LSB are wanted
-	ulong size_high = (MMCHS1_REG(MMCHS_RSP54) << 26) >> 10;
+	ulong size_high = (csd_reg[2] << 26) >> 10;
 
 	size = size_low | size_high;
 
@@ -776,15 +776,11 @@ ulong read_card_size()
 void read_productname(uchar * name)
 {
 
-	//Modifier le code ici
-	//CMD10 : SEND_CID, arg[1] is card address
-	mmchs_send_command((ulong) 10, rca, 0, 0);
-	
 	// Product name PNM 40 [103:64] 
 	// bits 95 to 64 
-	int name_low 	= MMCHS1_REG(MMCHS_RSP54);
+	int name_low 	= cid_reg[2]
 	// bits 127 to 96
-	int name_high	= MMCHS1_REG(MMCHS_RSP76);
+	int name_high	= cid_reg[3];
 
 	uchar * p = (uchar*)&name_low;
 	name[0]= p[0];
