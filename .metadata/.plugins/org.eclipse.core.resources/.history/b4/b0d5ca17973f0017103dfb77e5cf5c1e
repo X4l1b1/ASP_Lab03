@@ -23,7 +23,7 @@
 vulong AppStack_svr[APPSTACKSIZE/4];
 vulong AppStack_irq[APPSTACKSIZE/4];
 int t[8];
-vulong buffer[4096] = {0};
+vulong buffer[1024] = {0};
 
 void general_init();
 
@@ -41,7 +41,10 @@ int main(void)
 
 	display_sd_info();
 
-	mmchs_read_multiple_block(buffer, (ulong)0, 4);
+	mmchs_read_block(buffer, (ulong)0);
+	mmchs_read_block(buffer, (ulong)1);
+	mmchs_read_block(buffer, (ulong)2);
+	mmchs_read_block(buffer, (ulong)3);
 	fb_print_string((uchar*)buffer, 50, 300, 15);
 
 	while(1){

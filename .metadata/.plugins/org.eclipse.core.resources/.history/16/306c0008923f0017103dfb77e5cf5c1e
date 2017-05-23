@@ -776,30 +776,21 @@ void read_productname(uchar * name)
 
 	// Product name PNM 40 [103:64] 
 	// bits 95 to 64 
-	ulong name_low 	= cid_reg[2];
+	int name_low 	= cid_reg[2];
 	// bits 127 to 96
-	ulong name_high	= cid_reg[3];
+	int name_high	= cid_reg[3];
 
-	uchar * p = (uchar*)&name_low;
+	uchar * p = (uchar*)&name_high;
 	name[0]= p[3];
-	name[1]= p[2];
+	p = (uchar*)&name_low;
+	name[1]= p[0];
 	name[2]= p[1];
-	name[3]= p[0];
-	p = (uchar*)&name_high;
+	name[3]= p[2];
 	name[4]= p[3];
 	name[5]= '\0';
 	//  MMCHS1_REG(MMCHS_RSP54) accède aux 
 	// - MMCHS1_REG(MMCHS_RSP76) accède aux bits 127 à 96. 
 	// Donc on veut tout RSP54 et les 8 premiers bits de RSP76
-	/*
-
-
-	name[0]= cid_
-	name[1]= p[2];
-	name[2]= p[1];
-	name[3]= p[0];
-	name[4]= p[0];
-	name[5]]= p[0];*/
 
 }
 
