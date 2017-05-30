@@ -22,14 +22,14 @@ ulong line_nb,current_y;
 uchar lcd_line[CHAR_PER_LINE];
 
 /* data buffer, size : 10 clusters, 1 cluster = 8 blocks of 512 B */
-uchar buff[MAX_FILE_SIZE];
+uchar buffer[MAX_FILE_SIZE];
 
 
-int create_file(char *file_name,uchar *data,ulong nbyte)
+int create_file(char *file_name,uchar *data, ulong nbyte)
 {
 	if(nbyte > 8*SD_BLOCK_LENGTH) return 1;
 
-	buffer = memcpy((void*)buffer, (void*) data, *nbyte);
+	memcpy((void*)buffer, (void*)data, nbyte);
 	// File creation
 	FIL file;
 	FRESULT res = f_open(&file, file_name, FA_CREATE_NEW | FA_WRITE);
@@ -107,10 +107,19 @@ int print_file_info(char *file_name)
 	char str[100];
 
 	f_stat(file_name, &filinfo);
-/*
-	sprintf(str, "")
-	fb_print_string(buffer,20, line, lcd_fg_color);
 
+	if(filinfo.fsize == 0){
+		fb_print_string("Directory not supported",20, line, lcd_fg_color);
+	}
+
+	sprintf(str, "nom du fichier : %s", filinfo.fname);
+	fb_print_string(str,20, line, lcd_fg_color);
+
+	sprintf(str, "taille du fichier : %s", filinfo.fname);
+	fb_print_string(str,20, line, lcd_fg_color);
+
+
+/*
 	filinfo.fattrib BYTE
 	filinfo.fdate WORD
 	filinfo.fname char[13]
