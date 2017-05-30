@@ -90,6 +90,23 @@ int read_file(char *file_name)
 
 int print_file_info(char *file_name)
 {
+	FILINFO filinfo;
+	char str[100];
+
+	f_stat(file_name, &filinfo);
+/*
+	sprintf(str, "")
+	fb_print_string(buffer,20, line, lcd_fg_color);
+
+	filinfo.fattrib BYTE
+	filinfo.fdate WORD
+	filinfo.fname char[13]
+	filinfo.fsize DWORD
+	filinfo.ftime WORD
+
+*/
+
+
 
 	clear_screen();
 	fb_print_string((uchar *) "print_file_info : Function not implemented",20, 20, lcd_fg_color);
