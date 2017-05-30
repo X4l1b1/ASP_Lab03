@@ -10,7 +10,6 @@
 #include "lcd_toolbox.h"
 #include "lcd.h"
 #include "fat_toolbox.h"
-#include "mmchs.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -63,26 +62,22 @@ void scan_files (char* path)
 int read_file(char *file_name)
 {
 	FIL fsrc;
-	WORD nCharRed = 8*SD_BLOCK_LENGTH;
-	char buffer[8*SD_BLOCK_LENGTH];
-	int line = 20;
-
-	clear_screen();
+	WORD nCharRed = 8*512;
+	char buffer[8*512];
 
 	f_open(&fsrc, file_name, FA_OPEN_EXISTING | FA_READ);
 
-	while(nCharRed >= 8*SD_BLOCK_LENGTH){
-		f_read(&fsrc, buffer, 8*SD_BLOCK_LENGTH, &nCharRed);
-		buffer[nCharRed] = '\0';
-		fb_print_string(buffer,20, line, lcd_fg_color);
-
-		line += 16;
+	while(nCharRed >= 8*512){
+		f_read(&fsrc, buffer, 8*512, &nCharRed);
+		fb_print_string(buffer, 10, 10, lcd_fg_color);
 	}
+
+
 
 	f_close(&fsrc);
 
-
-	//fb_print_string((uchar *) "read_file : Function not implemented",20, 20, lcd_fg_color);
+	clear_screen();
+	fb_print_string((uchar *) "read_file : Function not implemented",20, 20, lcd_fg_color);
 
     return 0;
 }

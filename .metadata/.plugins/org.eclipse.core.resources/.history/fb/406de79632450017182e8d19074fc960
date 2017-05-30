@@ -73,7 +73,7 @@ int read_file(char *file_name)
 
 	while(nCharRed >= 8*SD_BLOCK_LENGTH){
 		f_read(&fsrc, buffer, 8*SD_BLOCK_LENGTH, &nCharRed);
-		buffer[nCharRed] = '\0';
+
 		fb_print_string(buffer,20, line, lcd_fg_color);
 
 		line += 16;

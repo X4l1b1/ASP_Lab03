@@ -1,32 +1,16 @@
-12:46:48 **** Incremental Build of configuration Debug for project labo_ASP_sdcard ****
+13:22:05 **** Incremental Build of configuration Debug for project labo_ASP_sdcard ****
 make all 
-arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o main.o main.c
-In file included from main.c:18:0:
-ff.h:18:0: warning: "NULL" redefined
-/opt/arm-2011.03/bin/../lib/gcc/arm-none-eabi/4.5.2/include/stddef.h:400:0: note: this is the location of the previous definition
-arm-none-eabi-gcc -e start  -T standalone.ld -static  -lc -L. -o labo_asp.elf crt0_arm.o obj_gpio/gpio_toolbox.o init.o menu_toolbox.o newlib_stubs.o main.o obj_lcd/lcd_toolbox.o int_arm.o sd_toolbox.o test_menu.o twl4030.o fat_toolbox.o ff.o obj_i2c/i2c_toolbox.o fat_mmcsd.o 
-main.c: In function 'main':
-main.c:39:2: warning: implicit declaration of function 'memset'
-main.c:39:2: warning: incompatible implicit declaration of built-in function 'memset'
-main.c:39:2: warning: passing argument 1 of 'memset' discards qualifiers from pointer target type
-main.c:39:2: note: expected 'void *' but argument is of type 'volatile long unsigned int *'
-main.c:40:2: warning: passing argument 1 of 'memset' discards qualifiers from pointer target type
-main.c:40:2: note: expected 'void *' but argument is of type 'volatile long unsigned int *'
-main.c:46:2: warning: implicit declaration of function 'display_sd_info'
-main.c:54:2: warning: implicit declaration of function 'test_menu'
-arm-none-eabi-nm --numeric-sort labo_asp.elf > labo_asp.sym
-arm-none-eabi-objdump --source --disassemble labo_asp.elf > labo_asp.dis
-12:46:51 **** Incremental Build of configuration Debug for project labo_ASP_sdcard ****
-make all 
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o fat_toolbox.o fat_toolbox.c
+fat_toolbox.c: In function 'scan_files':
 arm-none-eabi-gcc -e start  -T standalone.ld -static  -lc -L. -o labo_asp.elf crt0_arm.o obj_gpio/gpio_toolbox.o init.o menu_toolbox.o newlib_stubs.o main.o obj_lcd/lcd_toolbox.o int_arm.o sd_toolbox.o test_menu.o twl4030.o fat_toolbox.o ff.o obj_i2c/i2c_toolbox.o fat_mmcsd.o 
 arm-none-eabi-nm --numeric-sort labo_asp.elf > labo_asp.sym
 arm-none-eabi-objdump --source --disassemble labo_asp.elf > labo_asp.dis
-12:47:27 **** Incremental Build of configuration Debug for project labo_ASP_sdcard ****
-make all 
-arm-none-eabi-gcc -e start  -T standalone.ld -static  -lc -L. -o labo_asp.elf crt0_arm.o obj_gpio/gpio_toolbox.o init.o menu_toolbox.o newlib_stubs.o main.o obj_lcd/lcd_toolbox.o int_arm.o sd_toolbox.o test_menu.o twl4030.o fat_toolbox.o ff.o obj_i2c/i2c_toolbox.o fat_mmcsd.o 
-arm-none-eabi-nm --numeric-sort labo_asp.elf > labo_asp.sym
-arm-none-eabi-objdump --source --disassemble labo_asp.elf > labo_asp.dis
-12:49:57 **** Incremental Build of configuration Debug for project labo_ASP_sdcard ****
+fat_toolbox.c:56:14: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+lcd_toolbox.h:39:16: note: expected 'uchar *' but argument is of type 'char *'
+fat_toolbox.c: In function 'read_file':
+fat_toolbox.c:77:3: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+lcd_toolbox.h:39:16: note: expected 'uchar *' but argument is of type 'char *'
+13:22:09 **** Incremental Build of configuration Debug for project labo_ASP_sdcard ****
 make all 
 arm-none-eabi-gcc -e start  -T standalone.ld -static  -lc -L. -o labo_asp.elf crt0_arm.o obj_gpio/gpio_toolbox.o init.o menu_toolbox.o newlib_stubs.o main.o obj_lcd/lcd_toolbox.o int_arm.o sd_toolbox.o test_menu.o twl4030.o fat_toolbox.o ff.o obj_i2c/i2c_toolbox.o fat_mmcsd.o 
 arm-none-eabi-nm --numeric-sort labo_asp.elf > labo_asp.sym
