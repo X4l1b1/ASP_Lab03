@@ -121,7 +121,18 @@ int print_file_info(char *file_name)
 	sprintf(str, "File size : %d octet", filinfo.fsize);
 	fb_print_string(str,20, 36, lcd_fg_color);
 
-	sprintf(str, "Last modification : %d %d", filinfo.fdate, filinfo.ftime);
+	WORD date_unformatted = filinfo.fdate;
+	WORD date_year = date_unformatted >> 9;
+	WORD date_month = (date_unformatted & 0x1e0) >> 5;
+	WORD date_day = date_unformatted & 0x1f;
+
+	WORD time_unformatted = filinfo.ftime;
+	WORD time_h = time_unformatted >> 11;
+	WORD time_m = (time_unformatted & 0x7e0) >> 5;
+	WORD time_s = time_unformatted & 0x1f;
+
+	sprintf(str, "Last modification : %d/%d/%d %d:%d:%d", date_year + 1980, date_month, date_day,
+		time_h, time_m, time_s);
 	fb_print_string(str,20, 52, lcd_fg_color);
 
 	sprintf(str, "Attributs : 0x%x", filinfo.fattrib);
