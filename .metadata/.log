@@ -8814,3 +8814,11 @@ java.nio.channels.ClosedByInterruptException
 !ENTRY com.ti.ccstudio.debug 1 0 2017-05-30 14:06:01.747
 !MESSAGE DS_ERROR: Cortex_A8_0: Error: (Error -1025 @ 0x0) Internal error: Invalid error code. Restart the application. If error persists, please report the error. (Emulation package 5.1.636.0) 
 
+
+!ENTRY com.ti.ccstudio.debug 1 0 2017-05-30 14:36:15.489
+!MESSAGE DS_ERROR: Cortex_A8_0: JTAG Communication Error: (Error -1025 @ 0x0) Internal error: Invalid error code. Restart the application. If error persists, please report the error. (Emulation package 5.1.636.0) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2017-05-30 14:57:06.772
+!MESSAGE DS_ERROR: Cortex_A8_0: Error: (Error -1025 @ 0x0) Internal error: Invalid error code. Restart the application. If error persists, please report the error. (Emulation package 5.1.636.0) 
+

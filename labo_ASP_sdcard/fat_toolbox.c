@@ -135,11 +135,24 @@ int print_file_info(char *file_name)
 		time_h, time_m, time_s);
 	fb_print_string(str,20, 52, lcd_fg_color);
 
-	sprintf(str, "Attributs : 0x%x", filinfo.fattrib);
+	sprintf(str, "%s : %s", "Read Only", filinfo.fattrib & 0x01 ? "yes" : "no");
 	fb_print_string(str,20, 68, lcd_fg_color);
 
+	sprintf(str, "%s : %s", "Hidden", filinfo.fattrib & 0x02 ? "yes" : "no");
+	fb_print_string(str,20, 84, lcd_fg_color);
 
-/*
+	sprintf(str, "%s : %s", "Sys.File", filinfo.fattrib & 0x04 ? "yes" : "no");
+	fb_print_string(str,20,100, lcd_fg_color);
+
+	sprintf(str, "%s : %s", "Vol.Label", filinfo.fattrib & 0x08 ? "yes" : "no");
+	fb_print_string(str,20,116, lcd_fg_color);
+
+	sprintf(str, "%s : %s", "SubDir", filinfo.fattrib & 0x10 ? "yes" : "no");
+	fb_print_string(str,20,132, lcd_fg_color);
+
+	sprintf(str, "%s : %s", "Archive", filinfo.fattrib & 0x20 ? "yes" : "no");
+	fb_print_string(str,20,148, lcd_fg_color);
+	/*
 	filinfo.fattrib BYTE
 	filinfo.fdate WORD
 	filinfo.fname char[13]
