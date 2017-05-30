@@ -695,13 +695,15 @@ int mmchs_read_multiple_block(uchar *data, ulong block, uchar nblocks) // TODO :
 	int k;
 	vulong *data_ptr;
 
-	if(nblocks == 1)
-		return mmchs_read_block(data_ptr, block);
-	
-
 	// initialize data pointer to the destination address
 	data_ptr = (vulong *) data;
 
+	if(nblocks == 1){
+		 mmchs_read_block(buffer_data, block);
+		 memcpy(data, (void*) buffer_data, SD_BLOCK_LENGTH);
+		 return 0;
+	}
+	
 	// clear STATUS register
 	MMCHS1_REG(MMCHS_STAT)=0xFFFFFFFF;
 
@@ -758,13 +760,10 @@ int mmchs_read_multiple_block(uchar *data, ulong block, uchar nblocks) // TODO :
 ulong read_card_size()
 {
 	//return card size in number of K bytes
-	ulong size;
+	ulong size = 0;
 
-	//Completer le code 
-	//CMD9 : SEND_CSD. arg[1] is card address
-	mmchs_send_command((ulong) 9, rca, 0, 0);
+
 	// C_SIZE : 22 bits [69..48]
-
 	// Only 16 MSB are wanted
 	ulong size_low = csd_reg[1] >> 16;
 
@@ -786,17 +785,11 @@ void read_productname(uchar * name)
 
 	// Product name PNM 40 [103:64] 
 	// bits 95 to 64 
-	int name_low 	= cid_reg[2];
-	// bits 127 to 96
-	int name_high	= cid_reg[3];
-
-	uchar * p = (uchar*)&name_high;
-	name[0]= p[3];
-	p = (uchar*)&name_low;
-	name[1]= p[0];
-	name[2]= p[1];
-	name[3]= p[2];
-	name[4]= p[3];
+	name[0]= 0xff & cid_reg[3];
+	name[1]= 0xff & (cid_reg[2] >>24);
+	name[2]= 0xff & (cid_reg[2] >>16);
+	name[3]= 0xff & (cid_reg[2] >>8);
+	name[4]= 0xff & cid_reg[2];
 	name[5]= '\0';
 	//  MMCHS1_REG(MMCHS_RSP54) accède aux 
 	// - MMCHS1_REG(MMCHS_RSP76) accède aux bits 127 à 96. 
