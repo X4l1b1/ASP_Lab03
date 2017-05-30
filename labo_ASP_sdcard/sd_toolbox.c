@@ -612,30 +612,16 @@ int mmchs_read_block(const vulong *data, ulong block) // TODO :return -1 ???
 int mmchs_write_multiple_block(const uchar *data, ulong block, uchar nblocks) // TO TEST
 {
 
-	/*CMD24 adtc [31:0] data
-address2 R1 WRITE_BLOCK In case of SDSC Card, block length is
-set by the SET_BLOCKLEN
-command1
-
-In case of SDHC and SDXC Cards,
-block length is fixed 512 Bytes
-regardless of the SET_BLOCKLEN
-command. 
-CMD25 adtc [31:0] data
-address2
-R1 WRITE_MULTIPLE_B
-LOCK
-Continuously writes blocks of data until
-a STOP_TRANSMISSION follows.
-Block length is specified the same as
-WRITE_BLOCK command. */
-	
 	ulong arg;
 	int k;
 	vulong *data_ptr;
 
-	// initialize data pointer to the destination address
-	data_ptr = (vulong *) data;
+	memcpy((void*)buffer_data, (void*) data, SD_BLOCK_LENGTH*nblocks);
+
+	if(nblocks == 1){
+		 mmchs_write_block(buffer_data, block);
+		 return 0;
+	}
 
 	// clear STATUS register
 	MMCHS1_REG(MMCHS_STAT)=0xFFFFFFFF;
@@ -648,34 +634,39 @@ WRITE_BLOCK command. */
 
 	/* wait for the data lines mmc1_dati availability */
 	while ((MMCHS1_REG(MMCHS_PSTATE) & MMCHS_PSTATE_DATI) == MMCHS_PSTATE_DATI_CMDDIS);
-	// Send CMD24 command: write single block
+	// Send CMD18 command: read multiple block
 	arg=block;
 
-	// Sets right block number
-	mmchs_send_command((ulong) 23, nblocks, 0, 0);
+		// Sets right block number	
+	mmchs_send_command((ulong) 25, arg, 0, nblocks);
 	
-	mmchs_send_command((ulong) 25, arg, 0, 1);
-
-	// wait for buffer write ready
-		while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_BRR) == MMCHS_STAT_BWR_NOTREADY);
-	// clear flag
-		MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_BRR;
-
-	// WHERE TO WRITE?!
+	for(k = 0; k < SD_BLOCK_LENGTH*nblocks/4; k++){
+		
+		if(!(k%SD_BLOCK_LENGTH/4)){
+			// wait for buffer read ready
+			while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_BWR) == MMCHS_STAT_BWR_NOTREADY);
+			// clear flag
+			MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_BWR;
+		}
+		// read next 4 bytes to the buffer
+		MMCHS1_REG(MMCHS_DATA) = *data_ptr;
+		data_ptr++;
+	}
 
 	// wait for the end of the transfer
-	while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_TC) == 0)
+	while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_TC) == 0) // Useless ?
 		wait(1000);
+	// clear status TC bit
+	MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_TC;	
 
+	arg = 0;
 	// CMD12 : STOP_TRANSMISSION, arg is stuff bits
 	mmchs_send_command((ulong) 12, (ulong) 0, 0, 0);
 
-	// clear status TC bit
-	MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_TC;
+	memcpy(data, (void*) buffer_data, SD_BLOCK_LENGTH);
 
 
 	return 0;
-	
 }
 
 /**
@@ -696,7 +687,7 @@ int mmchs_read_multiple_block(uchar *data, ulong block, uchar nblocks) // TODO :
 	vulong *data_ptr;
 
 	// initialize data pointer to the destination address
-	data_ptr = (vulong *) data;
+	data_ptr = (vulong *) buffer_data;
 
 	if(nblocks == 1){
 		 mmchs_read_block(buffer_data, block);
@@ -718,33 +709,34 @@ int mmchs_read_multiple_block(uchar *data, ulong block, uchar nblocks) // TODO :
 	// Send CMD18 command: read multiple block
 	arg=block;
 
-		// Sets right block number
-		mmchs_send_command((ulong) 23, nblocks, 0, 0);
+		// Sets right block number	
+	mmchs_send_command((ulong) 18, arg, 0, nblocks);
 	
-		mmchs_send_command((ulong) 18, arg, 0, 1);
-	
+	for(k = 0; k < SD_BLOCK_LENGTH*nblocks/4; k++){
 
-	// wait for buffer read ready
-		while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_BRR) == MMCHS_STAT_BRR_NOTREADY);
-	// clear flag
-		MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_BRR;
-
-
-	for (k=0;k<SD_BLOCK_LENGTH*nblocks/4;k++)
-	{
-	// read next 4 bytes to the buffer
+		if(!(k%SD_BLOCK_LENGTH/4)){
+			// wait for buffer read ready
+			while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_BRR) == MMCHS_STAT_BRR_NOTREADY);
+			// clear flag
+			MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_BRR;
+		}
+		// read next 4 bytes to the buffer
 		*data_ptr = MMCHS1_REG(MMCHS_DATA);
 		data_ptr++;
 	}
-	// CMD12 : STOP_TRANSMISSION, arg is stuff bits
-	mmchs_send_command((ulong) 12, (ulong) 0, 0, 0);
-
 
 	// wait for the end of the transfer
 	while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_TC) == 0) // Useless ?
 		wait(1000);
 	// clear status TC bit
 	MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_TC;	
+
+	arg = 0;
+	// CMD12 : STOP_TRANSMISSION, arg is stuff bits
+	mmchs_send_command((ulong) 12, (ulong) 0, 0, 0);
+
+	memcpy(data, (void*) buffer_data, SD_BLOCK_LENGTH);
+
 
 	return 0;
 }
@@ -778,7 +770,7 @@ ulong read_card_size()
 
 /**
  * \brief   This function returns product name.
- *
+ *  Note : This function was taken from the solution you sent us on Tuesday 30.05
  **/
 void read_productname(uchar * name)
 {
