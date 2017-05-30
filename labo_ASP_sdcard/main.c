@@ -50,8 +50,13 @@ int main(void)
 
 	//mmchs_write_block(buffer1, 0x80);
 	//mmchs_read_block(buffer2, 0x80);
+	char text = "Salut salut salut salut.";
+	char filename = "Test.txt";
 
-	test_menu();
+	create_file(filename, text, strlen(text));
+	//test_menu();
+
+
 
 	while(1){
 		/*if(SWIsPressed(1)){
