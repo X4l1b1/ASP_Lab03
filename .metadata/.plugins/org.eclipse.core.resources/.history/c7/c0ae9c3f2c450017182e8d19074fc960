@@ -51,7 +51,7 @@ int main(void)
 	//mmchs_write_block(buffer1, 0x80);
 	//mmchs_read_block(buffer2, 0x80);
 
-	test_menu();
+	initMenusTree();
 
 	while(1){
 		/*if(SWIsPressed(1)){

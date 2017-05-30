@@ -60,10 +60,7 @@ void initMenusTree()
 	    // le nom de chaque fichier par la variable suivante : &finfo.fname[0]
 	    //
 	    ///////////////////////////////////////////////////
-	    if (f_opendir(&dirs, path) == FR_OK) {
-			i = strlen(path);
-			while ((f_readdir(&dirs, &finfo) == FR_OK) && finfo.fname[0])
-			{
+	    {
 	        	/* Main menu item title = file name */
 	        	memcpy(&fileNames[i][0],&finfo.fname[0],sizeof(fileNames[i]));
 	        	mainMenuItems[i].title = &fileNames[i][0];
@@ -101,7 +98,7 @@ void initMenusTree()
 	        	subMenuItems[i][3].submenu = 0;
 
 	        	i++;
-			}
+	    }
 
 	    /* initialize last items to NULL */
 
@@ -128,7 +125,6 @@ void initMenusTree()
     	subMenuItems[i][2].function_ptr = 0;
     	subMenuItems[i][2].data = 0;
     	subMenuItems[i][2].submenu = 0;
-	    }
 }
 
 void display_sd_info()

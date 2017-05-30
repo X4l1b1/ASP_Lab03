@@ -8558,3 +8558,11 @@ Binding(CTRL+SHIFT+H,
 !ENTRY com.ti.ccstudio.debug 1 0 2017-05-30 12:23:25.400
 !MESSAGE DS_ERROR: CS_DAP_PC_0: Power Failure on Target CPU: (Error -180 @ 0xFFFFFF4C) The controller has detected a target power loss. The user must turn-on or connect the power supply for the target. (Emulation package 5.1.636.0) 
 
+
+!ENTRY com.ti.ccstudio.debug 1 0 2017-05-30 12:37:24.467
+!MESSAGE DS_ERROR: Cortex_A8_0: JTAG Communication Error: (Error -1025 @ 0x0) Internal error: Invalid error code. Restart the application. If error persists, please report the error. (Emulation package 5.1.636.0) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2017-05-30 12:47:09.286
+!MESSAGE DS_ERROR: Cortex_A8_0: Error: (Error -1025 @ 0x0) Internal error: Invalid error code. Restart the application. If error persists, please report the error. (Emulation package 5.1.636.0) 
+
