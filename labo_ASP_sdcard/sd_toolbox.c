@@ -520,10 +520,18 @@ int mmchs_write_block(const vulong *data, ulong block)
 	mmchs_send_command((ulong) 24, arg, 0, 1);
 
 	// wait for buffer write ready
-		while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_BRR) == MMCHS_STAT_BWR_NOTREADY);
+		while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_BWR) == MMCHS_STAT_BWR_NOTREADY);
 	// clear flag
-		MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_BRR;
+		MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_BWR;
 
+
+
+	for (k=0;k<SD_BLOCK_LENGTH/4;k++)
+	{
+	// read next 4 bytes to the buffer
+		MMCHS1_REG(MMCHS_DATA) = *data_ptr;
+		data_ptr++;
+	}
 
 	// wait for the end of the transfer
 	while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_TC) == 0)
@@ -683,15 +691,13 @@ WRITE_BLOCK command. */
 int mmchs_read_multiple_block(uchar *data, ulong block, uchar nblocks) // TODO : return -1 ???
 {
 
-	if(nblocks == 1){
-
-		const vulong* data_ptr_sgl = (vulong*) data;
-		return mmchs_read_block(data_ptr_sgl, block);
-	}
-
 	ulong arg;
-	int k, l;
+	int k;
 	vulong *data_ptr;
+
+	if(nblocks == 1)
+		return mmchs_read_block(data_ptr, block);
+	
 
 	// initialize data pointer to the destination address
 	data_ptr = (vulong *) data;
@@ -708,35 +714,35 @@ int mmchs_read_multiple_block(uchar *data, ulong block, uchar nblocks) // TODO :
 	/* wait for the data lines mmc1_dati availability */
 	while ((MMCHS1_REG(MMCHS_PSTATE) & MMCHS_PSTATE_DATI) == MMCHS_PSTATE_DATI_CMDDIS);
 	// Send CMD18 command: read multiple block
-
 	arg=block;
+
+		// Sets right block number
+		mmchs_send_command((ulong) 23, nblocks, 0, 0);
 	
-		mmchs_send_command((ulong) 18, arg, 0, nblocks);
+		mmchs_send_command((ulong) 18, arg, 0, 1);
 	
-	for(l = 0; l < nblocks; l++){
+
 	// wait for buffer read ready
 		while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_BRR) == MMCHS_STAT_BRR_NOTREADY);
 	// clear flag
 		MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_BRR;
 
 
-		for (k=0;k<SD_BLOCK_LENGTH/4;k++)
-		{
-		// read next 4 bytes to the buffer
-			*data_ptr = MMCHS1_REG(MMCHS_DATA);
-			data_ptr++;
-		}
+	for (k=0;k<SD_BLOCK_LENGTH*nblocks/4;k++)
+	{
+	// read next 4 bytes to the buffer
+		*data_ptr = MMCHS1_REG(MMCHS_DATA);
+		data_ptr++;
 	}
+	// CMD12 : STOP_TRANSMISSION, arg is stuff bits
+	mmchs_send_command((ulong) 12, (ulong) 0, 0, 0);
+
 
 	// wait for the end of the transfer
 	while ((MMCHS1_REG(MMCHS_STAT) & MMCHS_STAT_TC) == 0) // Useless ?
 		wait(1000);
-
 	// clear status TC bit
 	MMCHS1_REG(MMCHS_STAT) = MMCHS_STAT_TC;	
-
-	// CMD12 : STOP_TRANSMISSION, arg is stuff bits
-	mmchs_send_command((ulong) 12, (ulong) 0, 0, 0);
 
 	return 0;
 }
@@ -755,6 +761,8 @@ ulong read_card_size()
 	ulong size;
 
 	//Completer le code 
+	//CMD9 : SEND_CSD. arg[1] is card address
+	mmchs_send_command((ulong) 9, rca, 0, 0);
 	// C_SIZE : 22 bits [69..48]
 
 	// Only 16 MSB are wanted
@@ -778,30 +786,21 @@ void read_productname(uchar * name)
 
 	// Product name PNM 40 [103:64] 
 	// bits 95 to 64 
-	ulong name_low 	= cid_reg[2];
+	int name_low 	= cid_reg[2];
 	// bits 127 to 96
-	ulong name_high	= cid_reg[3];
+	int name_high	= cid_reg[3];
 
-	uchar * p = (uchar*)&name_low;
+	uchar * p = (uchar*)&name_high;
 	name[0]= p[3];
-	name[1]= p[2];
+	p = (uchar*)&name_low;
+	name[1]= p[0];
 	name[2]= p[1];
-	name[3]= p[0];
-	p = (uchar*)&name_high;
+	name[3]= p[2];
 	name[4]= p[3];
 	name[5]= '\0';
 	//  MMCHS1_REG(MMCHS_RSP54) accède aux 
 	// - MMCHS1_REG(MMCHS_RSP76) accède aux bits 127 à 96. 
 	// Donc on veut tout RSP54 et les 8 premiers bits de RSP76
-	/*
-
-
-	name[0]= cid_
-	name[1]= p[2];
-	name[2]= p[1];
-	name[3]= p[0];
-	name[4]= p[0];
-	name[5]]= p[0];*/
 
 }
 

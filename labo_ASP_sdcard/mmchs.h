@@ -489,7 +489,7 @@
 #define MMCHS_STAT_OBI_OBIINT   	(0x1u)
 #define MMCHS_STAT_OBI_STS_CLEAR   	(0x1u)
 
-#define MMCHS_STAT_TC   		(0x00000002u)
+#define MMCHS_STAT_TC   		    (0x00000002u)
 #define MMCHS_STAT_TC_SHIFT   		(0x00000001u)
 
 
