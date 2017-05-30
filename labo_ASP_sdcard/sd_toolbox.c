@@ -611,7 +611,7 @@ int mmchs_read_block(const vulong *data, ulong block) // TODO :return -1 ???
  **/
 int mmchs_write_multiple_block(const uchar *data, ulong block, uchar nblocks) // TO TEST
 {
-
+	//TODO : ERROR WHEN nbblocks INVALID
 	ulong arg;
 	int k;
 	vulong *data_ptr;
@@ -681,7 +681,7 @@ int mmchs_write_multiple_block(const uchar *data, ulong block, uchar nblocks) //
  **/
 int mmchs_read_multiple_block(uchar *data, ulong block, uchar nblocks) // TODO : return -1 ???
 {
-
+	//TODO : ERROR WHEN nbblocks INVALID
 	ulong arg;
 	int k;
 	vulong *data_ptr;
