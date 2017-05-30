@@ -23,8 +23,7 @@
 vulong AppStack_svr[APPSTACKSIZE/4];
 vulong AppStack_irq[APPSTACKSIZE/4];
 int t[8];
-vulong buffer1[4096] = {0};
-vulong buffer2[4096] = {0};
+vulong buffer[4096] = {0};
 
 void general_init();
 
@@ -34,8 +33,7 @@ int main(void)
 	general_init();
 	clear_screen();
 
-	memset(buffer1, 0, 4096*sizeof(vulong));
-	memset(buffer2, 1, 4096*sizeof(vulong));
+	memset(buffer, 0, 1024*sizeof(vulong));
 
 	const char s[] = "Les fleurs d'oranger au parfum d'orient.\n\t\tCette douleur que j'ai en mangeant de l'origan.\rtest";
 
@@ -43,11 +41,8 @@ int main(void)
 
 	display_sd_info();
 
-	//mmchs_read_multiple_block(buffer, (ulong)0, 1);
-	//fb_print_string((uchar*)buffer1, 50, 300, 15);
-
-	mmchs_write_block(buffer1, 0x80);
-	mmchs_read_block(buffer2, 0x80);
+	mmchs_read_multiple_block(buffer, (ulong)0, 4);
+	fb_print_string((uchar*)buffer, 50, 300, 15);
 
 	while(1){
 		/*if(SWIsPressed(1)){
