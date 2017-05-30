@@ -1,4 +1,4 @@
-13:48:34 **** Incremental Build of configuration Debug for project labo_ASP_sdcard ****
+14:11:07 **** Incremental Build of configuration Debug for project labo_ASP_sdcard ****
 make all 
 arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o fat_toolbox.o fat_toolbox.c
 fat_toolbox.c: In function 'scan_files':
@@ -7,13 +7,22 @@ lcd_toolbox.h:39:16: note: expected 'uchar *' but argument is of type 'char *'
 fat_toolbox.c: In function 'read_file':
 fat_toolbox.c:90:3: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
 lcd_toolbox.h:39:16: note: expected 'uchar *' but argument is of type 'char *'
-arm-none-eabi-gcc -e start  -T standalone.ld -static  -lc -L. -o labo_asp.elf crt0_arm.o obj_gpio/gpio_toolbox.o init.o menu_toolbox.o newlib_stubs.o main.o obj_lcd/lcd_toolbox.o int_arm.o sd_toolbox.o test_menu.o twl4030.o fat_toolbox.o ff.o obj_i2c/i2c_toolbox.o fat_mmcsd.o 
 fat_toolbox.c: In function 'print_file_info':
-arm-none-eabi-nm --numeric-sort labo_asp.elf > labo_asp.sym
-arm-none-eabi-objdump --source --disassemble labo_asp.elf > labo_asp.dis
-fat_toolbox.c:112:3: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
-lcd_toolbox.h:39:16: note: expected 'uchar *' but argument is of type 'char *'
-fat_toolbox.c:116:2: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+fat_toolbox.c:114:3: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
 lcd_toolbox.h:39:16: note: expected 'uchar *' but argument is of type 'char *'
 fat_toolbox.c:119:2: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+arm-none-eabi-gcc -e start  -T standalone.ld -static  -lc -L. -o labo_asp.elf crt0_arm.o obj_gpio/gpio_toolbox.o init.o menu_toolbox.o newlib_stubs.o main.o obj_lcd/lcd_toolbox.o int_arm.o sd_toolbox.o test_menu.o twl4030.o fat_toolbox.o ff.o obj_i2c/i2c_toolbox.o fat_mmcsd.o 
 lcd_toolbox.h:39:16: note: expected 'uchar *' but argument is of type 'char *'
+fat_toolbox.c:122:2: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+lcd_toolbox.h:39:16: note: expected 'uchar *' but argument is of type 'char *'
+fat_toolbox.c:125:2: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+lcd_toolbox.h:39:16: note: expected 'uchar *' but argument is of type 'char *'
+fat_toolbox.c:128:2: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+lcd_toolbox.h:39:16: note: expected 'uchar *' but argument is of type 'char *'
+arm-none-eabi-nm --numeric-sort labo_asp.elf > labo_asp.sym
+arm-none-eabi-objdump --source --disassemble labo_asp.elf > labo_asp.dis
+14:11:11 **** Incremental Build of configuration Debug for project labo_ASP_sdcard ****
+make all 
+arm-none-eabi-gcc -e start  -T standalone.ld -static  -lc -L. -o labo_asp.elf crt0_arm.o obj_gpio/gpio_toolbox.o init.o menu_toolbox.o newlib_stubs.o main.o obj_lcd/lcd_toolbox.o int_arm.o sd_toolbox.o test_menu.o twl4030.o fat_toolbox.o ff.o obj_i2c/i2c_toolbox.o fat_mmcsd.o 
+arm-none-eabi-nm --numeric-sort labo_asp.elf > labo_asp.sym
+arm-none-eabi-objdump --source --disassemble labo_asp.elf > labo_asp.dis

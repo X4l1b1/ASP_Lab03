@@ -53,8 +53,13 @@ int main(void)
 	char text = "Salut salut salut salut.";
 	char filename = "Test.txt";
 
-	create_file(filename, text, strlen(text));
-	//test_menu();
+	//f_mount(0, &fs);
+
+	//create_file(filename, text, 24);
+
+	//f_mount(0, NULL);
+
+	test_menu();
 
 
 

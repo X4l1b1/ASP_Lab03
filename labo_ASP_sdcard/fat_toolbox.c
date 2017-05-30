@@ -29,15 +29,15 @@ int create_file(char *file_name,uchar *data, ulong nbyte)
 {
 	if(nbyte > 8*SD_BLOCK_LENGTH) return 1;
 
-	memcpy((void*)buffer, (void*)data, nbyte);
+	// memncpy((void*)buffer, (void*)data, nbyte);
 	// File creation
 	FIL file;
-	FRESULT res = f_open(&file, file_name, FA_CREATE_NEW | FA_WRITE);
-	if(res != FR_OK) return 1;
+	f_open(&file, file_name, FA_CREATE_NEW | FA_WRITE);
+
 
 	// File write
 	WORD nBytes = nbyte, nWritten;
-	res = f_write(&file, buffer, nBytes, &nWritten);
+	f_write(&file, data, nBytes, &nWritten);
 
 	f_close(&file);
 
@@ -108,15 +108,24 @@ int print_file_info(char *file_name)
 
 	f_stat(file_name, &filinfo);
 
+	clear_screen();
+
 	if(filinfo.fsize == 0){
 		fb_print_string("Directory not supported",20, line, lcd_fg_color);
+		return 1;
 	}
 
-	sprintf(str, "nom du fichier : %s", filinfo.fname);
-	fb_print_string(str,20, line, lcd_fg_color);
+	sprintf(str, "File name : %s", filinfo.fname);
+	fb_print_string(str,20, 20, lcd_fg_color);
 
-	sprintf(str, "taille du fichier : %s", filinfo.fname);
-	fb_print_string(str,20, line, lcd_fg_color);
+	sprintf(str, "File size : %d octet", filinfo.fsize);
+	fb_print_string(str,20, 36, lcd_fg_color);
+
+	sprintf(str, "Last modification : %d %d", filinfo.fdate, filinfo.ftime);
+	fb_print_string(str,20, 52, lcd_fg_color);
+
+	sprintf(str, "Attributs : 0x%x", filinfo.fattrib);
+	fb_print_string(str,20, 68, lcd_fg_color);
 
 
 /*
@@ -130,8 +139,8 @@ int print_file_info(char *file_name)
 
 
 
-	clear_screen();
-	fb_print_string((uchar *) "print_file_info : Function not implemented",20, 20, lcd_fg_color);
+
+	//fb_print_string((uchar *) "print_file_info : Function not implemented",20, 20, lcd_fg_color);
 
 	return 0;
 }
