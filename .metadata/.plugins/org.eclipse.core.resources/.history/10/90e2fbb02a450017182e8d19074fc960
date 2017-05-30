@@ -33,7 +33,6 @@ int create_file(char *file_name,uchar *data,ulong nbyte)
 
 
 
-int line = 300;
 
 /* path is "" for the root directory */
 void scan_files (char* path)
@@ -42,6 +41,7 @@ void scan_files (char* path)
     DIR dirs;
     int i;
 	char str[100];
+	int line = 300;
 
     if (f_opendir(&dirs, path) == FR_OK) {
         i = strlen(path);

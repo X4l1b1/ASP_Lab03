@@ -33,30 +33,11 @@ int create_file(char *file_name,uchar *data,ulong nbyte)
 
 
 
-int line = 300;
 
 /* path is "" for the root directory */
 void scan_files (char* path)
 {
-    FILINFO finfo;
-    DIR dirs;
-    int i;
-	char str[100];
-
-    if (f_opendir(&dirs, path) == FR_OK) {
-        i = strlen(path);
-        while ((f_readdir(&dirs, &finfo) == FR_OK) && finfo.fname[0]) {
-            if (finfo.fattrib & AM_DIR) {
-                sprintf(path+i, "/%s", &finfo.fname[0]);
-                scan_files(path);
-                *(path+i) = '\0';
-            } else {
-            	sprintf(str, "%s/%s\n", path, &finfo.fname[0]);
-            	fb_print_string(str, 150, line, 15);
-            	line += 16;
-            }
-        }
-    }
+   
 }
 
 int read_file(char *file_name)

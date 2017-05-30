@@ -33,7 +33,6 @@ int create_file(char *file_name,uchar *data,ulong nbyte)
 
 
 
-int line = 300;
 
 /* path is "" for the root directory */
 void scan_files (char* path)
@@ -51,9 +50,8 @@ void scan_files (char* path)
                 scan_files(path);
                 *(path+i) = '\0';
             } else {
-            	sprintf(str, "%s/%s\n", path, &finfo.fname[0]);
-            	fb_print_string(str, 150, line, 15);
-            	line += 16;
+            	sprintf(str, "%s/%s\n", path)
+            	fb_print_string(str, &finfo.fname[0], 150, 300, 15);
             }
         }
     }

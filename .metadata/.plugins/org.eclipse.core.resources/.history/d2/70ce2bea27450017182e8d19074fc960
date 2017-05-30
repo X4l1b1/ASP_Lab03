@@ -15,7 +15,6 @@
 #include "gpio_toolbox.h"
 #include "bits.h"
 #include "sd_toolbox.h"
-#include "ff.h"
 //#include "applications.h"
 
 
@@ -26,7 +25,6 @@ vulong AppStack_irq[APPSTACKSIZE/4];
 int t[8];
 vulong buffer1[4096] = {0};
 vulong buffer2[4096] = {0};
-FATFS fs;
 
 void general_init();
 
@@ -48,14 +46,8 @@ int main(void)
 	//mmchs_read_multiple_block(buffer, (ulong)0, 1);
 	//fb_print_string((uchar*)buffer1, 50, 300, 15);
 
-	//mmchs_write_block(buffer1, 0x80);
-	//mmchs_read_block(buffer2, 0x80);
-
-	f_mount(0, &fs);
-
-	scan_files("");
-
-	f_mount(0, NULL);
+	mmchs_write_block(buffer1, 0x80);
+	mmchs_read_block(buffer2, 0x80);
 
 	while(1){
 		/*if(SWIsPressed(1)){

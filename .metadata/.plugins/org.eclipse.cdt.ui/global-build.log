@@ -1,9 +1,13 @@
-10:22:11 **** Incremental Build of configuration Debug for project labo_ASP_sdcard ****
+12:25:35 **** Incremental Build of configuration Debug for project labo_ASP_sdcard ****
 make all 
+arm-none-eabi-gcc -c -Wall -O0 -g -I. -I/opt/cc/arm-none-eabi/include -o fat_toolbox.o fat_toolbox.c
+fat_toolbox.c: In function 'scan_files':
+fat_toolbox.c:55:14: warning: pointer targets in passing argument 1 of 'fb_print_string' differ in signedness
+lcd_toolbox.h:39:16: note: expected 'uchar *' but argument is of type 'char *'
 arm-none-eabi-gcc -e start  -T standalone.ld -static  -lc -L. -o labo_asp.elf crt0_arm.o obj_gpio/gpio_toolbox.o init.o menu_toolbox.o newlib_stubs.o main.o obj_lcd/lcd_toolbox.o int_arm.o sd_toolbox.o test_menu.o twl4030.o fat_toolbox.o ff.o obj_i2c/i2c_toolbox.o fat_mmcsd.o 
 arm-none-eabi-nm --numeric-sort labo_asp.elf > labo_asp.sym
 arm-none-eabi-objdump --source --disassemble labo_asp.elf > labo_asp.dis
-10:22:12 **** Incremental Build of configuration Debug for project labo_ASP_sdcard ****
+12:25:38 **** Incremental Build of configuration Debug for project labo_ASP_sdcard ****
 make all 
 arm-none-eabi-gcc -e start  -T standalone.ld -static  -lc -L. -o labo_asp.elf crt0_arm.o obj_gpio/gpio_toolbox.o init.o menu_toolbox.o newlib_stubs.o main.o obj_lcd/lcd_toolbox.o int_arm.o sd_toolbox.o test_menu.o twl4030.o fat_toolbox.o ff.o obj_i2c/i2c_toolbox.o fat_mmcsd.o 
 arm-none-eabi-nm --numeric-sort labo_asp.elf > labo_asp.sym
