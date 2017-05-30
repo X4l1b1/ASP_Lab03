@@ -27,6 +27,19 @@ uchar buff[MAX_FILE_SIZE];
 
 int create_file(char *file_name,uchar *data,ulong nbyte)
 {
+	if(nbyte > 8*SD_BLOCK_LENGTH) return 1;
+
+	buffer = memcpy((void*)buffer, (void*) data, *nbyte);
+	// File creation
+	FIL file;
+	FRESULT res = f_open(&file, file_name, FA_CREATE_NEW | FA_WRITE);
+	if(res != FR_OK) return 1;
+
+	// File write
+	WORD nBytes = nbyte, nWritten;
+	res = f_write(&file, buffer, nBytes, &nWritten);
+
+	f_close(&file);
 
 	return 0;
 }
