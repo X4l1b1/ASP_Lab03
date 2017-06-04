@@ -751,7 +751,6 @@ int mmchs_read_multiple_block(uchar *data, ulong block, uchar nblocks) // TODO :
  **/
 ulong read_card_size()
 {
-	//return card size in number of K bytes
 	ulong size = 0;
 
 
@@ -764,7 +763,7 @@ ulong read_card_size()
 
 	size = size_low | size_high;
 
-	return (size + 1)*512;
+	return (size + 1)*SD_BLOCK_LENGTH;
 }
 
 

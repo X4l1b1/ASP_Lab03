@@ -32,20 +32,17 @@ int create_file(char *file_name,uchar *data, ulong nbyte)
 	// memncpy((void*)buffer, (void*)data, nbyte);
 	// File creation
 	FIL file;
-	f_open(&file, file_name, FA_CREATE_NEW | FA_WRITE);
+	f_open(&file, file_name, FA_CREATE_ALWAYS | FA_WRITE);
 
 
 	// File write
-	WORD nBytes = nbyte, nWritten;
-	f_write(&file, data, nBytes, &nWritten);
+	WORD nBytes = *(WORD*) nbyte, nWritten;
+	f_write(&file, (void*) data, nBytes, &nWritten);
 
 	f_close(&file);
 
 	return 0;
 }
-
-
-
 
 int line = 300;
 
@@ -93,9 +90,6 @@ int read_file(char *file_name)
 	}
 
 	f_close(&fsrc);
-
-
-	//fb_print_string((uchar *) "read_file : Function not implemented",20, 20, lcd_fg_color);
 
     return 0;
 }
@@ -152,20 +146,7 @@ int print_file_info(char *file_name)
 
 	sprintf(str, "%s : %s", "Archive", filinfo.fattrib & 0x20 ? "yes" : "no");
 	fb_print_string(str,20,148, lcd_fg_color);
-	/*
-	filinfo.fattrib BYTE
-	filinfo.fdate WORD
-	filinfo.fname char[13]
-	filinfo.fsize DWORD
-	filinfo.ftime WORD
-
-*/
-
-
-
-
-	//fb_print_string((uchar *) "print_file_info : Function not implemented",20, 20, lcd_fg_color);
-
+	
 	return 0;
 }
 
