@@ -29,7 +29,6 @@ int create_file(char *file_name,uchar *data, ulong nbyte)
 {
 	if(nbyte > 8*SD_BLOCK_LENGTH) return 1;
 
-	// memncpy((void*)buffer, (void*)data, nbyte);
 	// File creation
 	FIL file;
 	f_open(&file, file_name, FA_CREATE_ALWAYS | FA_WRITE);
@@ -79,6 +78,7 @@ int read_file(char *file_name)
 
 	clear_screen();
 
+	// error if file doesn't exist
 	f_open(&fsrc, file_name, FA_OPEN_EXISTING | FA_READ);
 
 	while(nCharRed >= 8*SD_BLOCK_LENGTH){
@@ -115,11 +115,17 @@ int print_file_info(char *file_name)
 	sprintf(str, "File size : %d octet", filinfo.fsize);
 	fb_print_string(str,20, 36, lcd_fg_color);
 
+	// bit15:9 Year origin from 1980 (0..127)
+	// bit8:5 Month (1..12)
+	// bit4:0 Day (1..31)
 	WORD date_unformatted = filinfo.fdate;
 	WORD date_year = date_unformatted >> 9;
 	WORD date_month = (date_unformatted & 0x1e0) >> 5;
 	WORD date_day = date_unformatted & 0x1f;
 
+	// bit15:11 Hour (0..23)
+	// bit10:5 Minute (0..59)
+	// bit4:0 Second / 2 (0..29)
 	WORD time_unformatted = filinfo.ftime;
 	WORD time_h = time_unformatted >> 11;
 	WORD time_m = (time_unformatted & 0x7e0) >> 5;
